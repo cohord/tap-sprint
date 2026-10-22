@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070d1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tap Sprint">
+<title>Tap Sprint — 20-second mini game</title>
+<style>
+:root{color-scheme:dark;--ink:#f5f8ff;--muted:#98a4bf;--line:rgba(255,255,255,.10);--aqua:#64ffe1;--violet:#aa8bff;--gold:#ffd670}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100dvh;background:#070d1c;color:var(--ink);font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;align-items:center;justify-content:center;padding:12px}
+.game{width:min(100%,440px);padding:20px 18px 17px;border:1px solid rgba(146,168,226,.16);border-radius:26px;background:radial-gradient(circle at 90% 0%,rgba(122,86,255,.23),transparent 42%),linear-gradient(160deg,#172038,#0d1529 70%);box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;position:relative}
+.header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.eyebrow{font-size:10px;font-weight:900;letter-spacing:.19em;color:#b2a1ff}
+.silent{font-size:10px;font-weight:700;color:#b4c4df;border:1px solid var(--line);border-radius:30px;padding:6px 10px}
+h1{font-size:clamp(29px,7vw,39px);line-height:1.06;margin:0 0 4px;letter-spacing:-.055em;font-weight:950}
+h1 span{color:var(--aqua)}
+.sub{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:15px}
+.stat{padding:12px 8px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid var(--line);text-align:center}
+.stat .val{font-size:25px;line-height:1.15;display:block;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.stat .label{display:block;margin-top:4px;font-size:9px;color:#aab6d0;letter-spacing:.12em;font-weight:800}
+.time-wrap{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:11px;color:#b6c5e1;font-weight:750}
+#time{color:#fff;font-size:13px;font-variant-numeric:tabular-nums}
+.track{height:7px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:15px}
+#fill{width:100%;height:100%;border-radius:10px;background:linear-gradient(90deg,#a68bff,#5dffe2);transition:width .09s linear}
+.board-wrap{position:relative}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;aspect-ratio:1;position:relative}
+.tile{appearance:none;outline:none;border:1px solid rgba(183,200,255,.09);border-radius:17px;background:rgba(1,8,24,.34);position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:0;touch-action:manipulation;user-select:none;overflow:hidden}
+.tile:focus-visible{outline:2px solid #8eebff;outline-offset:1px}
+.tile.orb::before,.tile.trap::before{content:"";position:absolute;width:66%;aspect-ratio:1;border-radius:100%;animation:pop .18s cubic-bezier(.18,1.4,.35,1) both,glow 1.2s ease-in-out infinite alternate}
+.tile.orb::before{background:radial-gradient(circle at 28% 25%,#e8fff8,#5effd3 38%,#09a88e 76%);box-shadow:0 0 20px rgba(76,255,199,.42),inset -6px -7px 13px rgba(0,77,67,.22)}
+.tile.gold::before{background:radial-gradient(circle at 28% 25%,#fffbea,#ffdf6f 38%,#fa9b23 78%);box-shadow:0 0 25px rgba(255,205,99,.55),inset -6px -7px 12px rgba(133,66,0,.21)}
+.tile.trap::before{background:radial-gradient(circle at 28% 25%,#ffc9e2,#ff699b 45%,#bc256d 85%);box-shadow:0 0 16px rgba(255,72,140,.32)}
+.tile .symbol{position:relative;z-index:1;color:#003e35;font-size:clamp(26px,9vw,38px);font-weight:950;text-shadow:0 1px 1px rgba(255,255,255,.2)}
+.tile.gold .symbol{color:#784305}.tile.trap .symbol{color:#631133;font-size:32px}
+@keyframes pop{from{transform:scale(.1);opacity:.2}to{transform:scale(1);opacity:1}}
+@keyframes glow{from{filter:brightness(.97);transform:scale(.96)}to{filter:brightness(1.08);transform:scale(1.045)}}
+.overlay{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;padding:18px;border-radius:17px;background:rgba(6,13,30,.87);backdrop-filter:blur(6px);text-align:center}
+.overlay.hide{display:none}.overlay-card{width:100%;max-width:300px}
+.big-emoji{font-size:42px;display:block;margin-bottom:10px}
+.overlay h2{font-size:24px;line-height:1.16;letter-spacing:-.035em;margin:0 0 9px}
+.overlay p{color:#b4c3de;font-size:13px;line-height:1.55;margin:0 0 19px}
+.start{border:0;border-radius:14px;background:linear-gradient(110deg,#66ffe2,#7accff);color:#06232b;font-family:inherit;font-size:15px;font-weight:950;cursor:pointer;min-height:52px;padding:12px 26px;width:100%;box-shadow:0 8px 28px rgba(93,255,226,.2);touch-action:manipulation}
+.start:active{transform:scale(.98)}
+.legend{display:flex;align-items:center;justify-content:space-around;gap:5px;padding:14px 0 0;color:#aebbd2;font-size:10px;font-weight:700}
+.legend span{white-space:nowrap}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.green{background:var(--aqua)}.yellow{background:var(--gold)}.pink{background:#ff6da2}
+.burst{position:absolute;z-index:2;pointer-events:none;font-size:19px;font-weight:1000;animation:float .54s ease-out forwards;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+@keyframes float{0%{opacity:1;transform:translate(-50%,-20%) scale(.85)}90%{opacity:1}100%{opacity:0;transform:translate(-50%,-115%) scale(1.15)}}
+@media(max-width:340px){.game{padding:14px 12px}.board{gap:7px}.tile{border-radius:13px}.legend{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.tile.orb::before,.tile.trap::before{animation:none}.burst{animation:none}}
+</style>
+</head>
+<body>
+<main class="game" aria-label="Tap Sprint arcade game">
+  <div class="header"><div class="eyebrow">⚡ MICRO-BREAK ARCADE</div><div class="silent">🔇 SILENT MODE</div></div>
+  <h1>TAP <span>SPRINT.</span></h1>
+  <p class="sub">Your 20-second loading-screen obsession.</p>
+  <div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label">STREAK</span></div></div>
+  <div class="time-wrap"><span>TIME LEFT</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
+  <div class="board-wrap" id="board-wrap">
+    <div class="board" id="board" aria-label="Tap the glowing circles"></div>
+    <div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji" id="big-emoji">🎯</span><h2 id="overlay-title">Ready, tap, go!</h2><p id="overlay-description">Catch the glowing circles. Green earns 1, gold earns 3. Dodge the pink ones!</p><button class="start" id="play" type="button">PLAY · 20 SECONDS →</button></div></div>
+  </div>
+  <div class="legend"><span><i class="dot green"></i>+1 POINT</span><span><i class="dot yellow"></i>+3 GOLD</span><span><i class="dot pink"></i>−2 AVOID</span></div>
+</main>
+<script>
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id), board=$('board'), overlay=$('overlay');
+  const tiles=[];
+  let playing=false,points=0,best=0,streak=0,target=-1,trap=-1,gold=false,endAt=0,moveTimer=null,clockTimer=null,pausedAt=0;
+  try{best=Number(localStorage.getItem('tapsprint_best'))||0}catch(e){}
+  $('best').textContent=best;
+  for(let i=0;i<9;i++){
+    const btn=document.createElement('button');btn.type='button';btn.className='tile';btn.setAttribute('aria-label','Empty square');
+    btn.addEventListener('click',()=>tap(i));board.appendChild(btn);tiles.push(btn);
+  }
+  function rand(excludes){let n;do{n=Math.floor(Math.random()*9)}while(excludes.includes(n));return n}
+  function render(){
+    tiles.forEach((el,i)=>{
+      el.className='tile';el.replaceChildren();
+      if(playing&&i===target){el.classList.add('orb');if(gold)el.classList.add('gold');el.setAttribute('aria-label',gold?'Tap gold for three points':'Tap green for one point');const s=document.createElement('span');s.className='symbol';s.textContent=gold?'★':'✦';el.appendChild(s)}
+      else if(playing&&i===trap){el.classList.add('trap');el.setAttribute('aria-label','Avoid pink circle');const s=document.createElement('span');s.className='symbol';s.textContent='×';el.appendChild(s)}
+      else{el.setAttribute('aria-label','Empty square')}
+    });
+    $('score').textContent=points;$('streak').textContent=streak;$('best').textContent=best;
+  }
+  function spawn(){if(!playing)return;target=rand([]);gold=Math.random()<.18;trap=Math.random()<.43?rand([target]):-1;render()}
+  function schedule(){clearTimeout(moveTimer);if(playing)moveTimer=setTimeout(()=>{streak=0;spawn();schedule()},Math.max(600,1050-points*7))}
+  function burst(index,label,color){
+    const el=document.createElement('div'),tile=tiles[index],b=tile.getBoundingClientRect(),p=board.getBoundingClientRect();
+    el.className='burst';el.textContent=label;el.style.color=color;el.style.left=(b.left-p.left+b.width/2)+'px';el.style.top=(b.top-p.top+b.height/2)+'px';board.appendChild(el);setTimeout(()=>el.remove(),560);
+  }
+  function tap(i){
+    if(!playing)return;
+    if(i===target){const add=gold?3:1;points+=add;streak++;burst(i,'+'+add,gold?'#ffd670':'#66ffe0');spawn();schedule()}
+    else if(i===trap){points=Math.max(0,points-2);streak=0;burst(i,'−2','#ff85ab');spawn();schedule()}
+  }
+  function tick(){
+    if(!playing)return;
+    const remaining=Math.max(0,endAt-Date.now());$('time').textContent=(remaining/1000).toFixed(1)+'s';$('fill').style.width=(remaining/20000*100)+'%';
+    if(remaining<=0)finish();
+  }
+  function start(){
+    clearTimeout(moveTimer);clearInterval(clockTimer);playing=true;points=0;streak=0;target=-1;trap=-1;endAt=Date.now()+20000;
+    $('time').textContent='20.0s';$('fill').style.width='100%';overlay.classList.add('hide');spawn();schedule();clockTimer=setInterval(tick,80);
+  }
+  function finish(){
+    if(!playing)return;playing=false;clearTimeout(moveTimer);clearInterval(clockTimer);
+    if(points>best){best=points;try{localStorage.setItem('tapsprint_best',String(best))}catch(e){}}
+    target=-1;trap=-1;render();$('time').textContent='0.0s';$('fill').style.width='0%';
+    $('big-emoji').textContent=points>=25?'🏆':points>=12?'🚀':'⚡';
+    $('overlay-title').textContent=points+' points!';
+    $('overlay-description').textContent=points>=best&&points>0?'Nice! That’s your best score. Another round?':'20-second break complete. Think you can beat '+best+'?';
+    $('play').textContent='PLAY AGAIN ↗';overlay.classList.remove('hide');
+  }
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&playing){pausedAt=Date.now();clearTimeout(moveTimer);clearInterval(clockTimer)}
+    else if(!document.hidden&&playing&&pausedAt){endAt+=Date.now()-pausedAt;pausedAt=0;tick();schedule();clockTimer=setInterval(tick,80)}
+  });
+  $('play').addEventListener('click',start);
+})();
+</script>
+</body>
+</html>
