@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#070d1c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Tap Sprint">
-<title>Tap Sprint — 20-second mini game</title>
+<title>Tap Sprint — a little break, a better rhythm</title>
 <style>
 :root{color-scheme:dark;--ink:#f5f8ff;--muted:#98a4bf;--line:rgba(255,255,255,.10);--aqua:#64ffe1;--gold:#ffd670}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -42,18 +42,21 @@ h2{font-size:24px;line-height:1.16;letter-spacing:-.035em;margin:0 0 9px}.overla
 .chart{padding:14px;border:1px solid var(--line);border-radius:16px;background:#080f2280;margin-bottom:14px}.chart h3{font-size:12px;margin:0 0 6px}.chart svg{width:100%;height:auto;display:block}.chart-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.round-detail{font-size:12px;line-height:1.8;color:#b4c3de;margin-bottom:14px}
 @media(max-width:340px){.game{padding:14px 12px}.board{gap:7px}.tile{border-radius:13px}.legend{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.tile.orb::before,.tile.trap::before,.burst{animation:none}}
+
+button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-height:38px}.secondary{display:block;width:100%;border:1px solid var(--line);background:#ffffff08;color:#d1dbee;border-radius:13px;padding:12px;font-size:12px;font-weight:750;min-height:44px;margin-top:9px;touch-action:manipulation}.secondary:disabled{opacity:.35;cursor:default}.controls{display:flex;gap:10px}.controls .secondary{margin-top:12px}small{display:block;color:var(--muted);font-size:10px;margin-top:12px}.overlay-card{max-width:310px}.overlay{padding:12px}.big-emoji{color:var(--aqua);font-size:34px;margin-bottom:6px}.overlay p{margin-bottom:12px}.overlay h2{font-size:24px}.median-card{margin-bottom:14px}.progress{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}.history-row{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#aab6d0;padding:9px 0;border-bottom:1px solid #ffffff08}.history-row strong{color:var(--ink)}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.tile.hit{box-shadow:inset 0 0 28px #64ffe155}.tile.error{box-shadow:inset 0 0 28px #ff699b66}.game{padding-bottom:max(17px,env(safe-area-inset-bottom))}button:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}body{padding-top:max(12px,env(safe-area-inset-top))}.legend{flex-wrap:wrap}#next{margin-bottom:10px}
+@media(max-width:360px){.overlay h2{font-size:21px}.overlay p{font-size:11px}.overlay .start{font-size:12px;min-height:44px;padding:9px}.overlay .secondary{font-size:11px;padding:8px;min-height:40px}.big-emoji{display:none}.game{padding:14px 12px}.overlay small{font-size:9px;margin-top:7px}}
 </style>
 </head>
 <body>
 <main class="game" aria-label="Tap Sprint arcade game">
-<div class="header"><div class="eyebrow">⚡ MICRO-BREAK ARCADE</div><div class="silent">🔇 SILENT MODE</div></div>
-<h1>TAP <span>SPRINT.</span></h1><p class="sub">Your 20-second loading-screen obsession.</p>
-<div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label">STREAK</span></div></div>
+<div class="header"><div class="eyebrow">⚡ MICRO-BREAK ARCADE</div><button class="silent" id="sound" type="button" aria-pressed="false">Sound off</button></div>
+<h1>TAP <span>SPRINT.</span></h1><p class="sub">A little break. Find your rhythm. Get back to it.</p>
+<div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label" id="combo-label">COMBO · ×1</span></div></div>
 <div id="arena">
-<div class="time-wrap"><span>TIME LEFT</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
+<div class="time-wrap"><span id="phase">QUICK PLAY</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
 <div class="board-wrap"><div class="board" id="board" aria-label="Tap the glowing circles"></div>
-<div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji">🎯</span><h2>Ready, tap, go!</h2><p>Catch the glowing circles. Green earns 1, gold earns 3. Dodge the pink ones!</p><button class="start" id="play" type="button">PLAY · 20 SECONDS →</button></div></div></div>
-<div class="legend"><span><i class="dot green"></i>+1 POINT</span><span><i class="dot yellow"></i>+3 GOLD</span><span><i class="dot pink"></i>−2 AVOID</span></div>
+<div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji">✦</span><h2>Find your flow.</h2><p>Tap green and gold. Avoid pink ×.<br>Build a streak for up to ×4 points.</p><button class="start" id="play" type="button">Quick Play · 20 seconds →</button><button class="secondary" id="session" type="button">Three rounds · 60 seconds of play</button><small>Stop whenever work calls. No pressure.</small></div></div></div>
+<div class="controls"><button id="pause" class="secondary" type="button" disabled>Pause</button><button id="stop" class="secondary" type="button" disabled>Finish now</button></div><div class="legend"><span><i class="dot green"></i>+1 POINT</span><span><i class="dot yellow"></i>+3 GOLD</span><span><i class="dot pink"></i>−2 AVOID</span></div>
 </div>
 <section class="results" id="results" hidden aria-labelledby="result-title">
 <div class="eyebrow">ROUND COMPLETE</div><h2 id="result-title" tabindex="-1">Your play stats</h2><p class="note" id="result-message"></p>
@@ -63,77 +66,135 @@ h2{font-size:24px;line-height:1.16;letter-spacing:-.035em;margin:0 0 9px}.overla
 <div class="stat"><span class="val" id="accuracy">—</span><span class="label">TAP ACCURACY</span></div>
 <div class="stat"><span class="val" id="max-streak">0</span><span class="label">LONGEST STREAK</span></div>
 </div>
-<div class="chart"><h3>Reaction time · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
+<div class="stat median-card"><span class="val" id="median">—</span><span class="label">MEDIAN REACTION</span></div><div class="chart"><h3>Reaction time · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
 <div class="round-detail" id="round-detail"></div>
 <p class="note">Reaction time runs from a target appearing to your tap. Accuracy = successful hits ÷ all taps. Paused time is excluded.</p>
-<button class="start" id="again" type="button">PLAY AGAIN ↗</button>
+<button class="start" id="next" type="button" hidden>Next round →</button><button class="start" id="again" type="button">Beat my score →</button><button class="secondary" id="done" type="button">Done — back to work</button>
 </section>
-</main>
+<section id="progress" class="progress"><div class="eyebrow">YOUR RHYTHM · ON THIS DEVICE</div><p id="progress-summary" class="note">Your first personal best is one round away.</p><div id="history"></div><p id="storage-note" class="note" hidden>Progress could not be saved in this browser.</p></section><p id="announcement" class="sr-only" role="status" aria-live="polite"></p></main>
 <script>
+
 (function(){
-  'use strict';
-  const $=id=>document.getElementById(id),board=$('board'),overlay=$('overlay'),tiles=[];
-  let playing=false,points=0,best=0,streak=0,target=-1,trap=-1,gold=false,endAt=0,moveTimer=null,clockTimer=null,pausedAt=0;
-  let reactions=[],hits=0,trapHits=0,emptyTaps=0,missed=0,maxStreak=0,goldHits=0,spawnAt=0;
-  try{best=Number(localStorage.getItem('tapsprint_best'))||0}catch(e){}
-  $('best').textContent=best;
-  for(let i=0;i<9;i++){
-    const btn=document.createElement('button');btn.type='button';btn.className='tile';btn.setAttribute('aria-label','Empty square');
-    btn.addEventListener('click',()=>tap(i));board.appendChild(btn);tiles.push(btn);
-  }
-  function rand(excludes){let n;do{n=Math.floor(Math.random()*9)}while(excludes.includes(n));return n}
-  function render(){
-    tiles.forEach((el,i)=>{
-      el.className='tile';el.replaceChildren();
-      if(playing&&i===target){el.classList.add('orb');if(gold)el.classList.add('gold');el.setAttribute('aria-label',gold?'Tap gold for three points':'Tap green for one point');const s=document.createElement('span');s.className='symbol';s.textContent=gold?'★':'✦';el.appendChild(s)}
-      else if(playing&&i===trap){el.classList.add('trap');el.setAttribute('aria-label','Avoid pink circle');const s=document.createElement('span');s.className='symbol';s.textContent='×';el.appendChild(s)}
-      else el.setAttribute('aria-label','Empty square');
-    });
-    $('score').textContent=points;$('streak').textContent=streak;$('best').textContent=best;
-  }
-  function spawn(){if(!playing)return;target=rand([]);gold=Math.random()<.18;trap=Math.random()<.43?rand([target]):-1;render();spawnAt=performance.now()}
-  function schedule(){clearTimeout(moveTimer);if(playing)moveTimer=setTimeout(()=>{if(Date.now()>=endAt){finish();return}missed++;streak=0;spawn();schedule()},Math.max(600,1050-points*7))}
-  function burst(index,label,color){
-    const el=document.createElement('div'),b=tiles[index].getBoundingClientRect(),p=board.getBoundingClientRect();
-    el.className='burst';el.textContent=label;el.style.color=color;el.style.left=(b.left-p.left+b.width/2)+'px';el.style.top=(b.top-p.top+b.height/2)+'px';board.appendChild(el);setTimeout(()=>el.remove(),560);
-  }
-  function tap(i){
-    if(!playing||pausedAt)return;if(Date.now()>=endAt){finish();return}
-    if(i===target){reactions.push(performance.now()-spawnAt);hits++;if(gold)goldHits++;const add=gold?3:1;points+=add;streak++;maxStreak=Math.max(maxStreak,streak);burst(i,'+'+add,gold?'#ffd670':'#66ffe0');spawn();schedule()}
-    else if(i===trap){trapHits++;missed++;points=Math.max(0,points-2);streak=0;burst(i,'−2','#ff85ab');spawn();schedule()}
-    else emptyTaps++;
-  }
-  function tick(){
-    if(!playing)return;const remaining=Math.max(0,endAt-Date.now());$('time').textContent=(remaining/1000).toFixed(1)+'s';$('fill').style.width=(remaining/20000*100)+'%';if(remaining<=0)finish();
-  }
-  function start(){
-    clearTimeout(moveTimer);clearInterval(clockTimer);playing=true;points=0;streak=0;target=-1;trap=-1;pausedAt=0;
-    reactions=[];hits=trapHits=emptyTaps=missed=maxStreak=goldHits=0;endAt=Date.now()+20000;
-    $('results').hidden=true;$('arena').hidden=false;$('time').textContent='20.0s';$('fill').style.width='100%';overlay.classList.add('hide');spawn();schedule();clockTimer=setInterval(tick,80);
-  }
-  function chart(){
-    if(!reactions.length){$('reaction-chart').textContent='Hit a green or gold target next round to see your reaction times.';return}
-    const high=Math.max(100,...reactions),x=i=>24+(reactions.length===1?146:i/(reactions.length-1)*292),y=v=>106-v/high*78;
-    const points=reactions.map((v,i)=>x(i)+','+y(v)).join(' ');
-    $('reaction-chart').innerHTML='<svg viewBox="0 0 340 130" role="img" aria-label="Reaction times in hit order. Fastest '+Math.round(Math.min(...reactions))+' milliseconds; slowest '+Math.round(high)+' milliseconds."><text x="2" y="17" fill="#98a4bf" font-size="10">'+Math.round(high)+' ms</text><path d="M24 28V106H322" fill="none" stroke="#ffffff25"/><polyline points="'+points+'" fill="none" stroke="#64ffe1" stroke-width="2.5" stroke-linejoin="round"/>'+reactions.map((v,i)=>'<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3" fill="#64ffe1"><title>Hit '+(i+1)+': '+Math.round(v)+' ms</title></circle>').join('')+'<text x="2" y="120" fill="#98a4bf" font-size="10">0</text></svg><div class="chart-labels"><span>Hit 1</span><span>Hit '+reactions.length+'</span></div>';
-  }
-  function finish(){
-    if(!playing)return;playing=false;clearTimeout(moveTimer);clearInterval(clockTimer);const record=points>best;
-    if(record){best=points;try{localStorage.setItem('tapsprint_best',String(best))}catch(e){}}
-    target=-1;trap=-1;render();$('time').textContent='0.0s';$('fill').style.width='0%';
-    $('result-title').textContent=points+' points!';$('result-message').textContent=record?'🏆 New best score. Here’s how you played.':'20-second break complete. Here’s how you played.';
-    const ms=v=>Math.round(v)+' ms',taps=hits+trapHits+emptyTaps;
-    $('average').textContent=hits?ms(reactions.reduce((a,b)=>a+b,0)/hits):'—';$('fastest').textContent=hits?ms(Math.min(...reactions)):'—';
-    $('accuracy').textContent=taps?Math.round(hits/taps*100)+'%':'—';$('max-streak').textContent=maxStreak;
-    $('round-detail').textContent=hits+' hits · '+goldHits+' gold · '+missed+' missed targets · '+trapHits+' pink taps · '+emptyTaps+' empty taps';
-    chart();$('arena').hidden=true;$('results').hidden=false;$('result-title').focus({preventScroll:true});
-  }
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden&&playing&&!pausedAt){pausedAt=Date.now();clearTimeout(moveTimer);clearInterval(clockTimer)}
-    else if(!document.hidden&&playing&&pausedAt){const pause=Date.now()-pausedAt;endAt+=pause;spawnAt+=pause;pausedAt=0;tick();if(playing){schedule();clockTimer=setInterval(tick,80)}}
-  });
-  $('play').addEventListener('click',start);$('again').addEventListener('click',start);
+'use strict';
+const $=id=>document.getElementById(id), board=$('board'), overlay=$('overlay'), tiles=[];
+const DURATION=20000,KEY='tapsprint_v2',phases=['Warm up','Build','Sprint'];
+let saved={rounds:[],best:0,sessionBest:0,sound:false},storageOK=true;
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&Array.isArray(raw.rounds)){saved={...saved,...raw,rounds:raw.rounds.filter(r=>r&&Number.isFinite(r.score)&&Array.isArray(r.reactions)).slice(0,30)};saved.best=Math.max(0,Number(saved.best)||0);saved.sessionBest=Math.max(0,Number(saved.sessionBest)||0)}saved.best=Math.max(saved.best,Number(localStorage.getItem('tapsprint_best'))||0)}catch(e){storageOK=false}
+let playing=false,paused=false,mode='quick',round=0,completed=[],points=0,streak=0,target=-1,trap=-1,gold=false;
+let reactions=[],hits=0,trapHits=0,emptyTaps=0,missed=0,maxStreak=0,goldHits=0;
+let endAt=0,spawnAt=0,targetAt=0,pausedAt=0,clock=null,spawnTimer=null,spawnDelay=0,audio=null,lastTarget=-1;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true}catch(e){storageOK=false}$('storage-note').hidden=storageOK}
+function median(values){if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function mult(){return Math.min(4,1+Math.floor(streak/5))}
+function sound(kind){if(!saved.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume().catch(()=>{});const osc=audio.createOscillator(),gain=audio.createGain(),t=audio.currentTime;osc.type='sine';osc.frequency.setValueAtTime(kind==='miss'?150:kind==='gold'?880:520+mult()*90,t);gain.gain.setValueAtTime(.045,t);gain.gain.exponentialRampToValueAtTime(.001,t+.10);osc.connect(gain);gain.connect(audio.destination);osc.start(t);osc.stop(t+.11)}catch(e){}}
+function updateSound(){$('sound').textContent=saved.sound?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(saved.sound))}
+function progress(){
+ $('best').textContent=saved.best;
+ $('progress-summary').textContent=saved.rounds.length?saved.rounds.length+' recent rounds · Best round '+saved.best+' · Best 3-round session '+saved.sessionBest:'Your first personal best is one round away.';
+ $('history').replaceChildren();
+ saved.rounds.slice(0,5).forEach(r=>{const row=document.createElement('div');row.className='history-row';const left=document.createElement('span'),right=document.createElement('strong');left.textContent=(r.complete?'Round':'Early finish')+' · '+(r.accuracy===null?'—':r.accuracy+'%')+' accuracy';right.textContent=r.score+' pts';row.append(left,right);$('history').append(row)});
+ $('storage-note').hidden=storageOK;
+}
+for(let i=0;i<9;i++){
+ const btn=document.createElement('button');btn.type='button';btn.className='tile';btn.setAttribute('aria-label','Empty square');
+ // Pointer down gives immediate touch feedback; keyboard clicks remain supported.
+ btn.addEventListener('pointerdown',e=>{if(e.isPrimary&&e.button===0){e.preventDefault();tap(i)}});
+ btn.addEventListener('click',e=>{if(e.detail===0)tap(i)});board.append(btn);tiles.push(btn);
+}
+function render(){
+ tiles.forEach((el,i)=>{el.className='tile';el.replaceChildren();el.setAttribute('aria-label','Empty square');
+ if(playing&&!paused&&(i===target||i===trap)){const good=i===target;el.classList.add(good?'orb':'trap');if(good&&gold)el.classList.add('gold');el.setAttribute('aria-label',good?(gold?'Gold star, tap':'Green sparkle, tap'):'Pink cross, avoid');const s=document.createElement('span');s.className='symbol';s.textContent=good?(gold?'★':'✦'):'×';el.append(s)}});
+ $('score').textContent=points;$('streak').textContent=streak;$('combo-label').textContent='COMBO · ×'+mult();$('best').textContent=saved.best;
+}
+function rand(excluded){const choices=Array.from({length:9},(_,i)=>i).filter(i=>!excluded.includes(i));return choices[Math.floor(Math.random()*choices.length)]}
+function lifetime(){
+ const elapsed=1-Math.max(0,endAt-performance.now())/DURATION;
+ const base=mode==='session'?[1250,1080,930][round]:1150;
+ return Math.max(620,base-elapsed*190-Math.min(streak,20)*9);
+}
+function schedule(delay){clearTimeout(spawnTimer);if(playing&&!paused)spawnTimer=setTimeout(expire,delay)}
+function spawn(){
+ if(!playing||paused)return;
+ target=rand([lastTarget]);lastTarget=target;gold=Math.random()<.18;trap=Math.random()<(mode==='session'?.30+round*.09:.38)?rand([target]):-1;
+ render();spawnAt=performance.now();targetAt=spawnAt+lifetime();schedule(targetAt-spawnAt);
+}
+function expire(){if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}missed++;streak=0;spawn()}
+function burst(index,label,color){
+ const el=document.createElement('div'),b=tiles[index].getBoundingClientRect(),p=board.getBoundingClientRect();el.className='burst';el.textContent=label;el.style.color=color;el.style.left=(b.left-p.left+b.width/2)+'px';el.style.top=(b.top-p.top+b.height/2)+'px';board.append(el);setTimeout(()=>el.remove(),560);
+}
+function tap(i){
+ if(!playing||paused)return;const now=performance.now();if(now>=endAt){finish(true);return}
+ // A tap after the target deadline cannot claim the expired target.
+ if(now>=targetAt){expire();return}
+ if(i===target){
+  reactions.push(now-spawnAt);hits++;if(gold)goldHits++;streak++;maxStreak=Math.max(maxStreak,streak);const add=(gold?3:1)*mult();points+=add;
+  sound(gold?'gold':'hit');spawn();burst(i,'+'+add,gold?'#ffd670':'#66ffe0');tiles[i].classList.add('hit');
+ }else{
+  const pink=i===trap;if(pink){trapHits++;points=Math.max(0,points-2)}else emptyTaps++;
+  streak=0;sound('miss');spawn();burst(i,pink?'−2':'RESET','#ff85ab');tiles[i].classList.add('error');
+ }
+}
+function tick(){
+ if(!playing||paused)return;const remaining=Math.max(0,endAt-performance.now());$('time').textContent=(remaining/1000).toFixed(1)+'s';$('fill').style.width=remaining/DURATION*100+'%';
+ if(remaining===0)finish(true);
+}
+function startRound(){
+ clearTimeout(spawnTimer);clearInterval(clock);playing=true;paused=false;points=streak=hits=trapHits=emptyTaps=missed=maxStreak=goldHits=0;reactions=[];lastTarget=-1;
+ endAt=performance.now()+DURATION;$('results').hidden=true;$('arena').hidden=false;overlay.classList.add('hide');$('pause').disabled=$('stop').disabled=false;$('pause').textContent='Pause';
+ $('phase').textContent=mode==='quick'?'QUICK PLAY · FIND YOUR FLOW':'ROUND '+(round+1)+' / 3 · '+phases[round].toUpperCase();
+ spawn();tick();clock=setInterval(tick,50);$('announcement').textContent=mode==='quick'?'Quick Play started':'Round '+(round+1)+' started';
+}
+function start(which){mode=which;round=0;completed=[];sound('hit');startRound()}
+function chart(values){
+ if(!values.length){$('reaction-chart').textContent='Land a green or gold hit to see your reaction times.';return}
+ const high=Math.max(100,...values),x=i=>24+(values.length===1?146:i/(values.length-1)*292),y=v=>106-v/high*78;
+ $('reaction-chart').innerHTML='<svg viewBox="0 0 340 130" role="img" aria-label="Reaction times in hit order. Lower is faster."><text x="2" y="17" fill="#98a4bf" font-size="10">'+Math.round(high)+' ms</text><path d="M24 28V106H322" fill="none" stroke="#ffffff25"/><polyline points="'+values.map((v,i)=>x(i)+','+y(v)).join(' ')+'" fill="none" stroke="#64ffe1" stroke-width="2.5"/>'+values.map((v,i)=>'<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3" fill="#64ffe1"><title>Hit '+(i+1)+': '+Math.round(v)+' ms</title></circle>').join('')+'</svg><div class="chart-labels"><span>First hit</span><span>Last hit</span></div>';
+}
+function finish(complete){
+ if(!playing)return;playing=false;clearTimeout(spawnTimer);clearInterval(clock);const taps=hits+trapHits+emptyTaps;
+ const result={score:points,reactions:[...reactions],hits,trapHits,emptyTaps,missed,maxStreak,goldHits,accuracy:taps?Math.round(hits/taps*100):null,complete,date:new Date().toISOString(),mode};
+ const previous=saved.rounds.filter(r=>r.complete),record=complete&&points>saved.best;
+ const accuracyRecord=complete&&hits>=5&&previous.filter(r=>r.hits>=5).length>0&&result.accuracy>Math.max(...previous.filter(r=>r.hits>=5).map(r=>r.accuracy||0));
+ if(complete){saved.best=Math.max(saved.best,points);completed.push(result)}
+ // Partial attempts are retained as partial attempts, never as a round record.
+ saved.rounds.unshift(result);saved.rounds=saved.rounds.slice(0,30);
+ const sessionDone=mode==='session'&&complete&&round===2;
+ const total=completed.reduce((n,r)=>n+r.score,0),sessionRecord=sessionDone&&total>saved.sessionBest;
+ if(sessionDone)saved.sessionBest=Math.max(saved.sessionBest,total);
+ persist();render();progress();$('pause').disabled=$('stop').disabled=true;$('arena').hidden=true;$('results').hidden=false;
+ const scope=sessionDone?completed:[result],all=scope.flatMap(r=>r.reactions),sum=k=>scope.reduce((n,r)=>n+r[k],0),allTaps=sum('hits')+sum('trapHits')+sum('emptyTaps');
+ $('result-title').textContent=sessionDone?total+' points · session complete':points+' points'+(complete?'!':' · saved');
+ $('result-message').textContent=sessionRecord?'New three-round session best!':record?'New personal best round!':accuracyRecord?'Your most accurate round yet!':!complete?'Work calling? Your progress is saved.':mode==='session'&&!sessionDone?'Round '+(round+1)+' complete. Take a breather; continue when you choose.':'A good little break. Ready when you are.';
+ const ms=v=>Math.round(v)+' ms';
+ $('median').textContent=all.length?ms(median(all)):'—';$('average').textContent=all.length?ms(all.reduce((a,b)=>a+b,0)/all.length):'—';$('fastest').textContent=all.length?ms(Math.min(...all)):'—';
+ $('accuracy').textContent=allTaps?Math.round(sum('hits')/allTaps*100)+'%':'—';$('max-streak').textContent=Math.max(...scope.map(r=>r.maxStreak));
+ $('round-detail').textContent=sum('hits')+' hits · '+sum('goldHits')+' gold · '+sum('missed')+' expired targets · '+sum('trapHits')+' pink taps · '+sum('emptyTaps')+' empty taps'+(sessionDone?' · Rounds: '+completed.map(r=>r.score).join(' / '):'');
+ chart(all);$('next').hidden=!(mode==='session'&&complete&&round<2);$('next').textContent='Round '+(round+2)+' · '+(phases[round+1]||'')+' →';$('again').textContent='Quick Play again →';
+ $('result-title').focus({preventScroll:true});$('announcement').textContent=$('result-message').textContent;
+}
+function pause(){
+ if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}
+ paused=true;pausedAt=performance.now();spawnDelay=Math.max(0,targetAt-pausedAt);clearTimeout(spawnTimer);clearInterval(clock);render();
+ overlay.innerHTML='<div class="overlay-card"><span class="big-emoji">Ⅱ</span><h2>Take your time.</h2><p>Your round is paused.<br>Continue when you’re ready.</p><button class="start" id="resume" type="button">Resume →</button></div>';
+ overlay.classList.remove('hide');$('resume').addEventListener('click',resume);$('pause').textContent='Resume';
+}
+function resume(){
+ if(!playing||!paused)return;
+ const duration=performance.now()-pausedAt;endAt+=duration;spawnAt+=duration;targetAt+=duration;paused=false;overlay.classList.add('hide');$('pause').textContent='Pause';render();schedule(spawnDelay);tick();clock=setInterval(tick,50);
+}
+const homeMarkup=overlay.innerHTML;
+function bindHome(){$('play').addEventListener('click',()=>start('quick'));$('session').addEventListener('click',()=>start('session'))}
+function home(){
+ playing=false;paused=false;clearTimeout(spawnTimer);clearInterval(clock);points=streak=0;$('arena').hidden=false;$('results').hidden=true;overlay.innerHTML=homeMarkup;overlay.classList.remove('hide');$('phase').textContent='QUICK PLAY';$('time').textContent='20.0s';$('fill').style.width='100%';$('pause').disabled=$('stop').disabled=true;render();bindHome();$('play').focus({preventScroll:true});
+}
+$('sound').addEventListener('click',()=>{saved.sound=!saved.sound;updateSound();persist();sound('hit')});
+$('pause').addEventListener('click',()=>paused?resume():pause());$('stop').addEventListener('click',()=>finish(false));
+$('again').addEventListener('click',()=>start('quick'));$('next').addEventListener('click',()=>{round++;startRound()});$('done').addEventListener('click',home);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('blur',pause);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&playing){e.preventDefault();paused?resume():pause()}});
+bindHome();updateSound();render();progress();
 })();
+
 </script>
 </body>
 </html>
