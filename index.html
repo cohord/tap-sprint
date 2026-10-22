@@ -44,6 +44,7 @@ h2{font-size:24px;line-height:1.16;letter-spacing:-.035em;margin:0 0 9px}.overla
 @media(prefers-reduced-motion:reduce){.tile.orb::before,.tile.trap::before,.burst{animation:none}}
 
 button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-height:38px}.secondary{display:block;width:100%;border:1px solid var(--line);background:#ffffff08;color:#d1dbee;border-radius:13px;padding:12px;font-size:12px;font-weight:750;min-height:44px;margin-top:9px;touch-action:manipulation}.secondary:disabled{opacity:.35;cursor:default}.controls{display:flex;gap:10px}.controls .secondary{margin-top:12px}small{display:block;color:var(--muted);font-size:10px;margin-top:12px}.overlay-card{max-width:310px}.overlay{padding:12px}.big-emoji{color:var(--aqua);font-size:34px;margin-bottom:6px}.overlay p{margin-bottom:12px}.overlay h2{font-size:24px}.median-card{margin-bottom:14px}.progress{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}.history-row{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#aab6d0;padding:9px 0;border-bottom:1px solid #ffffff08}.history-row strong{color:var(--ink)}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.game{padding-bottom:max(17px,env(safe-area-inset-bottom))}button:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}body{padding-top:max(12px,env(safe-area-inset-top))}.legend{flex-wrap:wrap}#next{margin-bottom:10px}
+.countdown-number{font-size:clamp(72px,20vw,96px);font-weight:950;line-height:1;color:var(--aqua);margin:8px 0 12px;font-variant-numeric:tabular-nums}#phase{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#focus-level{flex-shrink:0;color:var(--aqua);font-size:10px}
 @media(max-width:360px){.overlay h2{font-size:21px}.overlay p{font-size:11px}.overlay .start{font-size:12px;min-height:44px;padding:9px}.overlay .secondary{font-size:11px;padding:8px;min-height:40px}.big-emoji{display:none}.game{padding:14px 12px}.overlay small{font-size:9px;margin-top:7px}}
 </style>
 </head>
@@ -53,7 +54,7 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 <h1>TAP <span>SPRINT.</span></h1><p class="sub">A little break. Find your rhythm. Get back to it.</p>
 <div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label" id="combo-label">COMBO · ×1</span></div></div>
 <div id="arena">
-<div class="time-wrap"><span id="phase">QUICK PLAY</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
+<div class="time-wrap"><span id="phase">QUICK PLAY</span><span id="focus-level" aria-label="Current challenge level">FOCUS 1</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
 <div class="board-wrap"><div class="board" id="board" aria-label="Tap the glowing circles"></div>
 <div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji">✦</span><h2>Find your flow.</h2><p>Tap green and gold. Avoid pink ×.<br>Build a streak for up to ×4 points.</p><button class="start" id="play" type="button">Quick Play · 20 seconds →</button><button class="secondary" id="session" type="button">Three rounds · 60 seconds of play</button><small>Stop whenever work calls. No pressure.</small></div></div></div>
 <div class="controls"><button id="pause" class="secondary" type="button" disabled>Pause</button><button id="stop" class="secondary" type="button" disabled>Finish now</button></div><div class="legend"><span><i class="dot green"></i>+1 POINT</span><span><i class="dot yellow"></i>+3 GOLD</span><span><i class="dot pink"></i>−2 AVOID</span></div>
@@ -77,12 +78,13 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), board=$('board'), overlay=$('overlay'), tiles=[];
-const DURATION=20000,KEY='tapsprint_v2',phases=['Warm up','Build','Sprint'];
-let saved={rounds:[],best:0,sessionBest:0,sound:false},storageOK=true;
-try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&Array.isArray(raw.rounds)){saved={...saved,...raw,rounds:raw.rounds.filter(r=>r&&Number.isFinite(r.score)&&Array.isArray(r.reactions)).slice(0,30)};saved.best=Math.max(0,Number(saved.best)||0);saved.sessionBest=Math.max(0,Number(saved.sessionBest)||0)}saved.best=Math.max(saved.best,Number(localStorage.getItem('tapsprint_best'))||0)}catch(e){storageOK=false}
+const DURATION=20000,MAX_FOCUS_LEVEL=5,GOLD_CHANCE=.34,MAX_GREEN_RUN=4,KEY='tapsprint_v2',phases=['Warm up','Build','Sprint'];
+let saved={rounds:[],best:0,sessionBest:0,sound:false,focusLevel:0},storageOK=true;
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&Array.isArray(raw.rounds)){saved={...saved,...raw,rounds:raw.rounds.filter(r=>r&&Number.isFinite(r.score)&&Array.isArray(r.reactions)).slice(0,30)};saved.best=Math.max(0,Number(saved.best)||0);saved.sessionBest=Math.max(0,Number(saved.sessionBest)||0);saved.focusLevel=Math.min(MAX_FOCUS_LEVEL,Math.max(0,Math.floor(Number(saved.focusLevel)||0)))}saved.best=Math.max(saved.best,Number(localStorage.getItem('tapsprint_best'))||0)}catch(e){storageOK=false}
 let playing=false,paused=false,mode='quick',round=0,completed=[],points=0,streak=0,target=-1,trap=-1,gold=false;
 let reactions=[],hits=0,trapHits=0,emptyTaps=0,missed=0,maxStreak=0,goldHits=0;
 let endAt=0,spawnAt=0,targetAt=0,pausedAt=0,clock=null,spawnTimer=null,spawnDelay=0,audio=null,lastTarget=-1;
+let focusLevel=saved.focusLevel,greenRun=0,recentTargets=[],sinceDifficultyCheck=0,targetLifetime=0,countingDown=false,countdownTimer=null;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true}catch(e){storageOK=false}$('storage-note').hidden=storageOK}
 function median(values){if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
 function mult(){return Math.min(4,1+Math.floor(streak/5))}
@@ -90,7 +92,7 @@ function sound(kind){if(!saved.sound)return;try{audio=audio||new(window.AudioCon
 function updateSound(){$('sound').textContent=saved.sound?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(saved.sound))}
 function progress(){
  $('best').textContent=saved.best;
- $('progress-summary').textContent=saved.rounds.length?saved.rounds.length+' recent rounds · Best round '+saved.best+' · Best 3-round session '+saved.sessionBest:'Your first personal best is one round away.';
+ $('progress-summary').textContent=saved.rounds.length?saved.rounds.length+' recent rounds · Best round '+saved.best+' · Best 3-round session '+saved.sessionBest+' · Focus level '+(saved.focusLevel+1):'Your first personal best is one round away.';
  $('history').replaceChildren();
  saved.rounds.slice(0,5).forEach(r=>{const row=document.createElement('div');row.className='history-row';const left=document.createElement('span'),right=document.createElement('strong');left.textContent=(r.complete?'Round':'Early finish')+' · '+(r.accuracy===null?'—':r.accuracy+'%')+' accuracy';right.textContent=r.score+' pts';row.append(left,right);$('history').append(row)});
  $('storage-note').hidden=storageOK;
@@ -107,18 +109,40 @@ function render(){
  $('score').textContent=points;$('streak').textContent=streak;$('combo-label').textContent='COMBO · ×'+mult();$('best').textContent=saved.best;
 }
 function rand(excluded){const choices=Array.from({length:9},(_,i)=>i).filter(i=>!excluded.includes(i));return choices[Math.floor(Math.random()*choices.length)]}
+function updateFocusLevel(){$('focus-level').textContent='FOCUS '+(focusLevel+1)}
+function chooseGold(){
+ // Gold stays special, but a run of green-only targets never exceeds four.
+ const isGold=greenRun>=MAX_GREEN_RUN||Math.random()<GOLD_CHANCE;
+ greenRun=isGold?0:greenRun+1;return isGold;
+}
 function lifetime(){
- const elapsed=1-Math.max(0,endAt-performance.now())/DURATION;
- const base=mode==='session'?[1250,1080,930][round]:1150;
- return Math.max(620,base-elapsed*190-Math.min(streak,20)*9);
+ const elapsed=Math.max(0,Math.min(1,1-Math.max(0,endAt-performance.now())/DURATION));
+ const base=mode==='session'?[1280,1190,1100][round]:1220;
+ return Math.max(560,base-elapsed*110-focusLevel*110-Math.min(streak,12)*5);
+}
+function recordOutcome(hit,reaction){
+ // Missed targets count for adapting difficulty even though tap accuracy excludes them.
+ recentTargets.push({hit,ratio:hit&&targetLifetime>0?reaction/targetLifetime:null});
+ if(recentTargets.length>14)recentTargets.shift();
+ sinceDifficultyCheck++;
+ if(recentTargets.length<8||sinceDifficultyCheck<6)return;
+ sinceDifficultyCheck=0;
+ const hitRate=recentTargets.filter(t=>t.hit).length/recentTargets.length;
+ const speed=median(recentTargets.filter(t=>t.hit).map(t=>t.ratio));
+ const previous=focusLevel;
+ if(hitRate>=.84&&speed!==null&&speed<.62)focusLevel=Math.min(MAX_FOCUS_LEVEL,focusLevel+1);
+ else if(hitRate<.63)focusLevel=Math.max(0,focusLevel-1);
+ if(focusLevel!==previous)updateFocusLevel();
 }
 function schedule(delay){clearTimeout(spawnTimer);if(playing&&!paused)spawnTimer=setTimeout(expire,delay)}
 function spawn(){
  if(!playing||paused)return;
- target=rand([lastTarget]);lastTarget=target;gold=Math.random()<.18;trap=Math.random()<(mode==='session'?.30+round*.09:.38)?rand([target]):-1;
- render();spawnAt=performance.now();targetAt=spawnAt+lifetime();schedule(targetAt-spawnAt);
+ target=rand([lastTarget]);lastTarget=target;gold=chooseGold();
+ const trapChance=Math.min(.60,(mode==='session'?.30+round*.05:.32)+focusLevel*.05);
+ trap=Math.random()<trapChance?rand([target]):-1;
+ render();spawnAt=performance.now();targetLifetime=lifetime();targetAt=spawnAt+targetLifetime;schedule(targetLifetime);
 }
-function expire(){if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}missed++;streak=0;spawn()}
+function expire(){if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}missed++;streak=0;recordOutcome(false,null);spawn()}
 function burst(index,label,color){
  const el=document.createElement('div'),b=tiles[index].getBoundingClientRect(),p=board.getBoundingClientRect();el.className='burst';el.textContent=label;el.style.color=color;el.style.left=(b.left-p.left+b.width/2)+'px';el.style.top=(b.top-p.top+b.height/2)+'px';board.append(el);setTimeout(()=>el.remove(),560);
 }
@@ -127,11 +151,11 @@ function tap(i){
  // A tap after the target deadline cannot claim the expired target.
  if(now>=targetAt){expire();return}
  if(i===target){
-  reactions.push(now-spawnAt);hits++;if(gold)goldHits++;streak++;maxStreak=Math.max(maxStreak,streak);const add=(gold?3:1)*mult();points+=add;
+  reactions.push(now-spawnAt);hits++;recordOutcome(true,now-spawnAt);if(gold)goldHits++;streak++;maxStreak=Math.max(maxStreak,streak);const add=(gold?3:1)*mult();points+=add;
   sound(gold?'gold':'hit');spawn();burst(i,'+'+add,gold?'#ffd670':'#66ffe0');
  }else{
   const pink=i===trap;if(pink){trapHits++;points=Math.max(0,points-2)}else emptyTaps++;
-  streak=0;sound('miss');spawn();burst(i,pink?'−2':'RESET','#ff85ab');
+  streak=0;recordOutcome(false,null);sound('miss');spawn();burst(i,pink?'−2':'RESET','#ff85ab');
  }
 }
 function tick(){
@@ -139,9 +163,27 @@ function tick(){
  if(remaining===0)finish(true);
 }
 function startRound(){
- clearTimeout(spawnTimer);clearInterval(clock);playing=true;paused=false;points=streak=hits=trapHits=emptyTaps=missed=maxStreak=goldHits=0;reactions=[];lastTarget=-1;
- endAt=performance.now()+DURATION;$('results').hidden=true;$('arena').hidden=false;overlay.classList.add('hide');$('pause').disabled=$('stop').disabled=false;$('pause').textContent='Pause';
+ clearTimeout(countdownTimer);clearTimeout(spawnTimer);clearInterval(clock);
+ playing=false;paused=false;countingDown=true;points=streak=hits=trapHits=emptyTaps=missed=maxStreak=goldHits=0;
+ reactions=[];lastTarget=-1;greenRun=0;recentTargets=[];sinceDifficultyCheck=0;
+ $('results').hidden=true;$('arena').hidden=false;$('pause').disabled=$('stop').disabled=true;$('pause').textContent='Pause';
+ $('time').textContent='20.0s';$('fill').style.width='100%';
  $('phase').textContent=mode==='quick'?'QUICK PLAY · FIND YOUR FLOW':'ROUND '+(round+1)+' / 3 · '+phases[round].toUpperCase();
+ updateFocusLevel();render();
+ overlay.innerHTML='<div class="overlay-card"><h2 id="countdown-number" class="countdown-number">3</h2><p>Ready, focus...</p></div>';
+ overlay.classList.remove('hide');$('announcement').textContent='Starting in 3 seconds';
+ let count=3;
+ function nextCount(){
+  if(!countingDown)return;
+  count--;
+  if(count>0){$('countdown-number').textContent=count;$('announcement').textContent='Starting in '+count+' seconds';countdownTimer=setTimeout(nextCount,1000)}
+  else beginRound();
+ }
+ countdownTimer=setTimeout(nextCount,1000);
+}
+function beginRound(){
+ if(!countingDown)return;countingDown=false;playing=true;
+ endAt=performance.now()+DURATION;overlay.classList.add('hide');$('pause').disabled=$('stop').disabled=false;
  spawn();tick();clock=setInterval(tick,50);$('announcement').textContent=mode==='quick'?'Quick Play started':'Round '+(round+1)+' started';
 }
 function start(which){mode=which;round=0;completed=[];sound('hit');startRound()}
@@ -161,6 +203,7 @@ function finish(complete){
  const sessionDone=mode==='session'&&complete&&round===2;
  const total=completed.reduce((n,r)=>n+r.score,0),sessionRecord=sessionDone&&total>saved.sessionBest;
  if(sessionDone)saved.sessionBest=Math.max(saved.sessionBest,total);
+ saved.focusLevel=focusLevel;
  persist();render();progress();$('pause').disabled=$('stop').disabled=true;$('arena').hidden=true;$('results').hidden=false;
  const scope=sessionDone?completed:[result],all=scope.flatMap(r=>r.reactions),sum=k=>scope.reduce((n,r)=>n+r[k],0),allTaps=sum('hits')+sum('trapHits')+sum('emptyTaps');
  $('result-title').textContent=sessionDone?total+' points · session complete':points+' points'+(complete?'!':' · saved');
@@ -173,6 +216,11 @@ function finish(complete){
  $('result-title').focus({preventScroll:true});$('announcement').textContent=$('result-message').textContent;
 }
 function pause(){
+ if(countingDown){
+  clearTimeout(countdownTimer);countingDown=false;
+  overlay.innerHTML='<div class="overlay-card"><h2>Ready when you are.</h2><p>Start your countdown whenever you’re ready.</p><button class="start" id="restart-countdown" type="button">Start countdown →</button></div>';
+  $('restart-countdown').addEventListener('click',startRound);return;
+ }
  if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}
  paused=true;pausedAt=performance.now();spawnDelay=Math.max(0,targetAt-pausedAt);clearTimeout(spawnTimer);clearInterval(clock);render();
  overlay.innerHTML='<div class="overlay-card"><span class="big-emoji">Ⅱ</span><h2>Take your time.</h2><p>Your round is paused.<br>Continue when you’re ready.</p><button class="start" id="resume" type="button">Resume →</button></div>';
@@ -185,14 +233,14 @@ function resume(){
 const homeMarkup=overlay.innerHTML;
 function bindHome(){$('play').addEventListener('click',()=>start('quick'));$('session').addEventListener('click',()=>start('session'))}
 function home(){
- playing=false;paused=false;clearTimeout(spawnTimer);clearInterval(clock);points=streak=0;$('arena').hidden=false;$('results').hidden=true;overlay.innerHTML=homeMarkup;overlay.classList.remove('hide');$('phase').textContent='QUICK PLAY';$('time').textContent='20.0s';$('fill').style.width='100%';$('pause').disabled=$('stop').disabled=true;render();bindHome();$('play').focus({preventScroll:true});
+ playing=false;paused=false;countingDown=false;clearTimeout(countdownTimer);clearTimeout(spawnTimer);clearInterval(clock);points=streak=0;focusLevel=saved.focusLevel;updateFocusLevel();$('arena').hidden=false;$('results').hidden=true;overlay.innerHTML=homeMarkup;overlay.classList.remove('hide');$('phase').textContent='QUICK PLAY';$('time').textContent='20.0s';$('fill').style.width='100%';$('pause').disabled=$('stop').disabled=true;render();bindHome();$('play').focus({preventScroll:true});
 }
 $('sound').addEventListener('click',()=>{saved.sound=!saved.sound;updateSound();persist();sound('hit')});
 $('pause').addEventListener('click',()=>paused?resume():pause());$('stop').addEventListener('click',()=>finish(false));
 $('again').addEventListener('click',()=>start('quick'));$('next').addEventListener('click',()=>{round++;startRound()});$('done').addEventListener('click',home);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('blur',pause);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&playing){e.preventDefault();paused?resume():pause()}});
-bindHome();updateSound();render();progress();
+bindHome();updateSound();updateFocusLevel();render();progress();
 })();
 
 </script>
