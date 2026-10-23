@@ -94,6 +94,12 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 .progress .note{margin:11px 0 0}
 @media(max-width:360px){.breakdown-grid{gap:6px}.breakdown-card{padding:11px 8px}.breakdown-label{font-size:10px}.breakdown-hint{font-size:9px}.progress-metric{padding:13px 11px}.history-score strong{font-size:24px}}
 
+/* Quiet reminders appear in the results, never over gameplay. */
+.work-reminder{display:flex;align-items:flex-start;gap:11px;padding:13px 14px;margin:2px 0 16px;border:1px solid rgba(178,161,255,.27);border-radius:14px;background:linear-gradient(120deg,rgba(178,161,255,.11),rgba(100,255,225,.035))}
+.work-reminder-mark{flex:0 0 auto;font-size:20px;line-height:1.2}
+.work-reminder strong{display:block;color:#e2d9ff;font-size:13px;line-height:1.3;margin-bottom:4px}
+.work-reminder p{font-size:11px;line-height:1.55;color:#b5c4db;margin:0}
+
 </style>
 </head>
 <body>
@@ -109,6 +115,7 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 </div>
 <section class="results" id="results" hidden aria-labelledby="result-title">
 <div class="eyebrow">ROUND COMPLETE</div><h2 id="result-title" tabindex="-1">Your play stats</h2><p class="note" id="result-message"></p>
+<aside id="work-reminder" class="work-reminder" aria-label="Gentle break reminder" hidden><span class="work-reminder-mark" aria-hidden="true">☕</span><div><strong>Time to get back to it?</strong><p id="work-reminder-text"></p></div></aside>
 <div class="stats">
 <div class="stat"><span class="val" id="average">—</span><span class="label">AVERAGE REACTION</span></div>
 <div class="stat"><span class="val" id="fastest">—</span><span class="label">FASTEST REACTION</span></div>
@@ -147,9 +154,11 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 (function(){
 'use strict';
 const $=id=>document.getElementById(id), board=$('board'), overlay=$('overlay'), tiles=[];
-const DURATION=20000,MAX_FOCUS_LEVEL=5,GOLD_CHANCE=.34,MAX_GREEN_RUN=4,KEY='tapsprint_v2',phases=['Warm up','Build','Sprint'];
-let saved={rounds:[],best:0,sessionBest:0,sound:false,focusLevel:0},storageOK=true;
+const DURATION=20000,MAX_FOCUS_LEVEL=5,GOLD_CHANCE=.34,MAX_GREEN_RUN=4,BREAK_WINDOW_MS=30*60*1000,KEY='tapsprint_v2',phases=['Warm up','Build','Sprint'];
+let saved={rounds:[],best:0,sessionBest:0,sound:false,focusLevel:0,sessionChain:0,lastSessionAt:0},storageOK=true;
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&Array.isArray(raw.rounds)){saved={...saved,...raw,rounds:raw.rounds.filter(r=>r&&Number.isFinite(r.score)&&Array.isArray(r.reactions)).slice(0,30)};saved.best=Math.max(0,Number(saved.best)||0);saved.sessionBest=Math.max(0,Number(saved.sessionBest)||0);saved.focusLevel=Math.min(MAX_FOCUS_LEVEL,Math.max(0,Math.floor(Number(saved.focusLevel)||0)))}saved.best=Math.max(saved.best,Number(localStorage.getItem('tapsprint_best'))||0)}catch(e){storageOK=false}
+saved.sessionChain=Number.isSafeInteger(Number(saved.sessionChain))&&Number(saved.sessionChain)>=0?Number(saved.sessionChain):0;
+saved.lastSessionAt=Number.isFinite(Number(saved.lastSessionAt))&&Number(saved.lastSessionAt)>0?Number(saved.lastSessionAt):0;
 let playing=false,paused=false,mode='quick',round=0,completed=[],points=0,streak=0,target=-1,trap=-1,gold=false;
 let reactions=[],hits=0,trapHits=0,emptyTaps=0,missed=0,maxStreak=0,goldHits=0;
 let endAt=0,spawnAt=0,targetAt=0,pausedAt=0,clock=null,spawnTimer=null,spawnDelay=0,audio=null,lastTarget=-1;
@@ -289,6 +298,12 @@ function chart(values){
  const high=Math.max(100,...values),x=i=>24+(values.length===1?146:i/(values.length-1)*292),y=v=>106-v/high*78;
  $('reaction-chart').innerHTML='<svg viewBox="0 0 340 130" role="img" aria-label="Reaction times in hit order. Lower is faster."><text x="2" y="17" fill="#98a4bf" font-size="10">'+Math.round(high)+' ms</text><path d="M24 28V106H322" fill="none" stroke="#ffffff25"/><polyline points="'+values.map((v,i)=>x(i)+','+y(v)).join(' ')+'" fill="none" stroke="#64ffe1" stroke-width="2.5"/>'+values.map((v,i)=>'<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3" fill="#64ffe1"><title>Hit '+(i+1)+': '+Math.round(v)+' ms</title></circle>').join('')+'</svg><div class="chart-labels"><span>First hit</span><span>Last hit</span></div>';
 }
+// Count finished games, not individual rounds of a three-round session.
+function recordCompletedGame(){
+ const now=Date.now(),elapsed=now-saved.lastSessionAt;
+ saved.sessionChain=saved.lastSessionAt>0&&elapsed>=0&&elapsed<=BREAK_WINDOW_MS?saved.sessionChain+1:1;
+ saved.lastSessionAt=now;
+}
 function finish(complete){
  if(!playing)return;playing=false;clearTimeout(spawnTimer);clearInterval(clock);const taps=hits+trapHits+emptyTaps;
  const result={score:points,reactions:[...reactions],hits,trapHits,emptyTaps,missed,maxStreak,goldHits,accuracy:taps?Math.round(hits/taps*100):null,complete,date:new Date().toISOString(),mode};
@@ -300,11 +315,17 @@ function finish(complete){
  const sessionDone=mode==='session'&&complete&&round===2;
  const total=completed.reduce((n,r)=>n+r.score,0),sessionRecord=sessionDone&&total>saved.sessionBest;
  if(sessionDone)saved.sessionBest=Math.max(saved.sessionBest,total);
+ const gameDone=complete&&(mode==='quick'||sessionDone);
+ if(gameDone)recordCompletedGame();
+ const showReminder=gameDone&&saved.sessionChain%3===0;
  saved.focusLevel=focusLevel;
  persist();render();progress();$('pause').disabled=$('stop').disabled=true;$('arena').hidden=true;$('results').hidden=false;
  const scope=sessionDone?completed:[result],all=scope.flatMap(r=>r.reactions),sum=k=>scope.reduce((n,r)=>n+r[k],0),allTaps=sum('hits')+sum('trapHits')+sum('emptyTaps');
  $('result-title').textContent=sessionDone?total+' points · session complete':points+' points'+(complete?'!':' · saved');
  $('result-message').textContent=sessionRecord?'New three-round session best!':record?'New personal best round!':accuracyRecord?'Your most accurate round yet!':!complete?'Work calling? Your progress is saved.':mode==='session'&&!sessionDone?'Round '+(round+1)+' complete. Take a breather; continue when you choose.':'A good little break. Ready when you are.';
+ $('work-reminder').hidden=!showReminder;
+ if(showReminder)$('work-reminder-text').textContent=
+  'That’s '+saved.sessionChain+' games in a row. A good moment to refocus on what you were doing — or keep playing if you’d like.';
  const ms=v=>Math.round(v)+' ms';
  $('median').textContent=all.length?ms(median(all)):'—';$('average').textContent=all.length?ms(all.reduce((a,b)=>a+b,0)/all.length):'—';$('fastest').textContent=all.length?ms(Math.min(...all)):'—';
  $('accuracy').textContent=allTaps?Math.round(sum('hits')/allTaps*100)+'%':'—';$('max-streak').textContent=Math.max(...scope.map(r=>r.maxStreak));
@@ -336,7 +357,7 @@ function home(){
 }
 $('sound').addEventListener('click',()=>{saved.sound=!saved.sound;updateSound();persist();sound('hit')});
 $('pause').addEventListener('click',()=>paused?resume():pause());$('stop').addEventListener('click',()=>finish(false));
-$('again').addEventListener('click',()=>start('quick'));$('next').addEventListener('click',()=>{round++;startRound()});$('done').addEventListener('click',home);
+$('again').addEventListener('click',()=>start('quick'));$('next').addEventListener('click',()=>{round++;startRound()});$('done').addEventListener('click',()=>{saved.sessionChain=0;saved.lastSessionAt=0;persist();home()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('blur',pause);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&playing){e.preventDefault();paused?resume():pause()}});
 bindHome();updateSound();updateFocusLevel();render();progress();
