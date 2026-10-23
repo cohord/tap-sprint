@@ -46,6 +46,54 @@ h2{font-size:24px;line-height:1.16;letter-spacing:-.035em;margin:0 0 9px}.overla
 button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-height:38px}.secondary{display:block;width:100%;border:1px solid var(--line);background:#ffffff08;color:#d1dbee;border-radius:13px;padding:12px;font-size:12px;font-weight:750;min-height:44px;margin-top:9px;touch-action:manipulation}.secondary:disabled{opacity:.35;cursor:default}.controls{display:flex;gap:10px}.controls .secondary{margin-top:12px}small{display:block;color:var(--muted);font-size:10px;margin-top:12px}.overlay-card{max-width:310px}.overlay{padding:12px}.big-emoji{color:var(--aqua);font-size:34px;margin-bottom:6px}.overlay p{margin-bottom:12px}.overlay h2{font-size:24px}.median-card{margin-bottom:14px}.progress{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}.history-row{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#aab6d0;padding:9px 0;border-bottom:1px solid #ffffff08}.history-row strong{color:var(--ink)}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.game{padding-bottom:max(17px,env(safe-area-inset-bottom))}button:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}body{padding-top:max(12px,env(safe-area-inset-top))}.legend{flex-wrap:wrap}#next{margin-bottom:10px}
 .countdown-number{font-size:clamp(72px,20vw,96px);font-weight:950;line-height:1;color:var(--aqua);margin:8px 0 12px;font-variant-numeric:tabular-nums}#phase{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#focus-level{flex-shrink:0;color:var(--aqua);font-size:10px}
 @media(max-width:360px){.overlay h2{font-size:21px}.overlay p{font-size:11px}.overlay .start{font-size:12px;min-height:44px;padding:9px}.overlay .secondary{font-size:11px;padding:8px;min-height:40px}.big-emoji{display:none}.game{padding:14px 12px}.overlay small{font-size:9px;margin-top:7px}}
+
+/* Results: clear, colour-coded outcomes and readable previous performance */
+.breakdown{margin:16px 0 17px}
+.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 11px}
+.section-heading h3{font-size:17px;letter-spacing:-.025em;margin:0;color:var(--ink)}
+.section-heading span{font-size:10px;color:var(--muted);font-weight:700}
+.breakdown-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.breakdown-card{--card-accent:var(--aqua);grid-column:span 2;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:12px 11px 13px;border-radius:15px;background:linear-gradient(145deg,color-mix(in srgb,var(--card-accent) 13%,#152038),#10192e 78%);border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent)}
+.breakdown-card.wide{grid-column:span 3}
+.breakdown-card.gold-card{--card-accent:#ffd670}.breakdown-card.pink-card{--card-accent:#ff7da9}.breakdown-card.expired-card{--card-accent:#baa8ff}.breakdown-card.empty-card{--card-accent:#9ac3e9}
+.breakdown-label{display:flex;align-items:center;gap:6px;color:#c7d2e8;font-size:11px;font-weight:750;line-height:1.25}
+.breakdown-dot{height:8px;width:8px;flex-shrink:0;border-radius:50%;background:var(--card-accent)}
+.breakdown-value{color:var(--card-accent);font-size:clamp(27px,7vw,34px);line-height:1.1;letter-spacing:-.04em;font-weight:950;font-variant-numeric:tabular-nums}
+.breakdown-hint{font-size:10px;font-weight:650;color:#a4b2cc;margin:0;line-height:1.3}
+.round-scores{font-size:11px;font-weight:700;color:#c9d7ed;margin:10px 0 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#ffffff06}
+.progress{margin-top:24px;padding-top:22px}
+.progress-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:13px}
+.progress h3{font-size:23px;letter-spacing:-.04em;margin:5px 0 0;line-height:1.2}
+.progress-count{flex-shrink:0;font-size:11px;font-weight:800;color:#c4d1e8;background:#ffffff0d;border:1px solid var(--line);border-radius:99px;padding:7px 9px}
+.progress-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.progress-metric{padding:15px 13px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid var(--line);min-width:0}
+.progress-metric.best-round{background:linear-gradient(135deg,#4bffdf18,#142b34 90%);border-color:#64ffe14a}
+.progress-metric.best-session{background:linear-gradient(135deg,#ffd67016,#242238 90%);border-color:#ffd67047}
+.progress-metric-label{display:block;color:#aebed9;font-size:10px;letter-spacing:.08em;font-weight:850;line-height:1.3}
+.progress-metric-value{display:block;font-size:clamp(30px,8vw,39px);line-height:1.3;font-weight:950;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.best-round .progress-metric-value{color:var(--aqua)}.best-session .progress-metric-value{color:var(--gold)}
+.progress-metric-unit{font-size:11px;font-weight:800;color:#aab9d2;letter-spacing:0}
+.history-header{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:23px 0 10px}
+.history-header h4{font-size:16px;margin:0;letter-spacing:-.02em}.history-header span{font-size:10px;color:var(--muted)}
+.history-list{display:grid;gap:9px}
+.progress .history-row{display:block;border:1px solid var(--line);background:#ffffff07;border-radius:13px;padding:14px 12px 12px;color:var(--ink)}
+.progress .history-row.is-best{border-color:#64ffe159;background:#64ffe109}
+.history-row-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.history-description{display:flex;min-width:0;flex-direction:column;gap:5px}
+.history-name{font-size:11px;font-weight:850;letter-spacing:.055em;color:#bac7df}
+.history-info{font-size:13px;color:#d2ddf0;font-weight:700}
+.history-best-tag{color:var(--aqua);font-size:10px;font-weight:850;letter-spacing:.04em}
+.history-score{display:flex;flex-shrink:0;align-items:baseline;gap:4px;font-variant-numeric:tabular-nums}
+.history-score strong{font-size:27px;font-weight:950;letter-spacing:-.05em;line-height:1;color:var(--ink)}
+.history-row.is-best .history-score strong{color:var(--aqua)}
+.history-score span{font-size:10px;color:var(--muted);font-weight:800}
+.history-meter{height:5px;margin-top:12px;border-radius:99px;overflow:hidden;background:#ffffff12}
+.history-meter-fill{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7bafff,var(--aqua))}
+.history-row.is-best .history-meter-fill{background:var(--aqua)}
+.history-empty{border:1px dashed var(--line);padding:18px 13px;border-radius:13px;color:var(--muted);font-size:12px;line-height:1.5}
+.progress .note{margin:11px 0 0}
+@media(max-width:360px){.breakdown-grid{gap:6px}.breakdown-card{padding:11px 8px}.breakdown-label{font-size:10px}.breakdown-hint{font-size:9px}.progress-metric{padding:13px 11px}.history-score strong{font-size:24px}}
+
 </style>
 </head>
 <body>
@@ -67,12 +115,33 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 <div class="stat"><span class="val" id="accuracy">—</span><span class="label">TAP ACCURACY</span></div>
 <div class="stat"><span class="val" id="max-streak">0</span><span class="label">LONGEST STREAK</span></div>
 </div>
-<div class="stat median-card"><span class="val" id="median">—</span><span class="label">MEDIAN REACTION</span></div><div class="chart"><h3>Reaction time · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
-<div class="round-detail" id="round-detail"></div>
+<div class="stat median-card"><span class="val" id="median">—</span><span class="label">MEDIAN REACTION</span></div>
+<section class="breakdown" aria-labelledby="breakdown-title">
+<div class="section-heading"><h3 id="breakdown-title">Your hits, at a glance</h3><span>Round breakdown</span></div>
+<div class="breakdown-grid">
+<div class="breakdown-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Hits</span><strong class="breakdown-value" id="detail-hits">0</strong><small class="breakdown-hint">Green + gold</small></div>
+<div class="breakdown-card gold-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Gold</span><strong class="breakdown-value" id="detail-gold">0</strong><small class="breakdown-hint">Of your hits</small></div>
+<div class="breakdown-card pink-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Pink taps</span><strong class="breakdown-value" id="detail-pink">0</strong><small class="breakdown-hint">Avoid these</small></div>
+<div class="breakdown-card wide expired-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Expired targets</span><strong class="breakdown-value" id="detail-expired">0</strong><small class="breakdown-hint">Targets missed in time</small></div>
+<div class="breakdown-card wide empty-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Empty taps</span><strong class="breakdown-value" id="detail-empty">0</strong><small class="breakdown-hint">Taps outside targets</small></div>
+</div><p id="round-scores" class="round-scores" hidden></p>
+</section>
+<div class="chart"><h3>Reaction time · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
 <p class="note">Reaction time runs from a target appearing to your tap. Accuracy = successful hits ÷ all taps. Paused time is excluded.</p>
 <button class="start" id="next" type="button" hidden>Next round →</button><button class="start" id="again" type="button">Beat my score →</button><button class="secondary" id="done" type="button">Done — back to work</button>
 </section>
-<section id="progress" class="progress"><div class="eyebrow">YOUR RHYTHM · ON THIS DEVICE</div><p id="progress-summary" class="note">Your first personal best is one round away.</p><div id="history"></div><p id="storage-note" class="note" hidden>Progress could not be saved in this browser.</p></section><p id="announcement" class="sr-only" role="status" aria-live="polite"></p></main>
+<section id="progress" class="progress" aria-labelledby="progress-title">
+<div class="progress-top"><div><div class="eyebrow">YOUR RHYTHM · ON THIS DEVICE</div><h3 id="progress-title">Your past performance</h3></div><span class="progress-count" id="progress-count">0 rounds</span></div>
+<div class="progress-metrics" aria-label="Your personal records">
+<div class="progress-metric best-round"><span class="progress-metric-label">BEST ROUND</span><strong class="progress-metric-value" id="progress-best">0</strong><span class="progress-metric-unit">POINTS</span></div>
+<div class="progress-metric best-session"><span class="progress-metric-label">BEST 3-ROUND SESSION</span><strong class="progress-metric-value" id="progress-session">0</strong><span class="progress-metric-unit">POINTS</span></div>
+<div class="progress-metric"><span class="progress-metric-label">ROUNDS RECORDED</span><strong class="progress-metric-value" id="progress-played">0</strong><span class="progress-metric-unit">RECENT</span></div>
+<div class="progress-metric"><span class="progress-metric-label">FOCUS LEVEL</span><strong class="progress-metric-value" id="progress-focus">1</strong><span class="progress-metric-unit">CURRENT</span></div>
+</div>
+<div class="history-header"><h4>Recent rounds</h4><span>Latest first · last 5</span></div>
+<div id="history" class="history-list"></div>
+<p id="progress-summary" class="note">Play a round to start your history.</p><p id="storage-note" class="note" hidden>Progress could not be saved in this browser.</p>
+</section><p id="announcement" class="sr-only" role="status" aria-live="polite"></p></main>
 <script>
 
 (function(){
@@ -92,9 +161,37 @@ function sound(kind){if(!saved.sound)return;try{audio=audio||new(window.AudioCon
 function updateSound(){$('sound').textContent=saved.sound?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(saved.sound))}
 function progress(){
  $('best').textContent=saved.best;
- $('progress-summary').textContent=saved.rounds.length?saved.rounds.length+' recent rounds · Best round '+saved.best+' · Best 3-round session '+saved.sessionBest+' · Focus level '+(saved.focusLevel+1):'Your first personal best is one round away.';
+ const played=saved.rounds.length;
+ $('progress-count').textContent=played+' '+(played===1?'round':'rounds');
+ $('progress-best').textContent=saved.best.toLocaleString();
+ $('progress-session').textContent=saved.sessionBest.toLocaleString();
+ $('progress-played').textContent=played;
+ $('progress-focus').textContent=saved.focusLevel+1;
+ $('progress-summary').textContent=played?'Showing your five most recent attempts. Progress is saved on this device.':'Play a round to start your history.';
  $('history').replaceChildren();
- saved.rounds.slice(0,5).forEach(r=>{const row=document.createElement('div');row.className='history-row';const left=document.createElement('span'),right=document.createElement('strong');left.textContent=(r.complete?'Round':'Early finish')+' · '+(r.accuracy===null?'—':r.accuracy+'%')+' accuracy';right.textContent=r.score+' pts';row.append(left,right);$('history').append(row)});
+ const latest=saved.rounds.slice(0,5),maxScore=Math.max(1,saved.best,...latest.map(r=>r.score));
+ latest.forEach((r,i)=>{
+  const row=document.createElement('article');row.className='history-row';
+  const isBest=r.complete&&r.score>0&&r.score===saved.best;
+  if(isBest)row.classList.add('is-best');
+  const top=document.createElement('div');top.className='history-row-top';
+  const description=document.createElement('div');description.className='history-description';
+  const name=document.createElement('span');name.className='history-name';
+  const date=new Date(r.date),dateLabel=Number.isNaN(date.getTime())?'':(' · '+new Intl.DateTimeFormat('en-NZ',{day:'numeric',month:'short'}).format(date));
+  name.textContent=(r.complete?(r.mode==='session'?'SESSION ROUND':'QUICK PLAY'):'EARLY FINISH')+dateLabel;
+  const info=document.createElement('span');info.className='history-info';
+  info.textContent=(r.accuracy===null||!Number.isFinite(r.accuracy)?'—':r.accuracy+'%')+' accuracy';
+  description.append(name,info);
+  if(isBest){const tag=document.createElement('span');tag.className='history-best-tag';tag.textContent='★ PERSONAL BEST';description.append(tag)}
+  const score=document.createElement('div');score.className='history-score';
+  const value=document.createElement('strong');value.textContent=r.score.toLocaleString();
+  const unit=document.createElement('span');unit.textContent='PTS';score.append(value,unit);
+  top.append(description,score);
+  const meter=document.createElement('div');meter.className='history-meter';meter.setAttribute('aria-hidden','true');
+  const fill=document.createElement('span');fill.className='history-meter-fill';fill.style.width=Math.max(0,Math.min(100,r.score/maxScore*100))+'%';meter.append(fill);
+  row.append(top,meter);$('history').append(row);
+ });
+ if(!played){const empty=document.createElement('div');empty.className='history-empty';empty.textContent='Your recent rounds and scores will appear here after your first game.';$('history').append(empty)}
  $('storage-note').hidden=storageOK;
 }
 for(let i=0;i<9;i++){
@@ -211,7 +308,9 @@ function finish(complete){
  const ms=v=>Math.round(v)+' ms';
  $('median').textContent=all.length?ms(median(all)):'—';$('average').textContent=all.length?ms(all.reduce((a,b)=>a+b,0)/all.length):'—';$('fastest').textContent=all.length?ms(Math.min(...all)):'—';
  $('accuracy').textContent=allTaps?Math.round(sum('hits')/allTaps*100)+'%':'—';$('max-streak').textContent=Math.max(...scope.map(r=>r.maxStreak));
- $('round-detail').textContent=sum('hits')+' hits · '+sum('goldHits')+' gold · '+sum('missed')+' expired targets · '+sum('trapHits')+' pink taps · '+sum('emptyTaps')+' empty taps'+(sessionDone?' · Rounds: '+completed.map(r=>r.score).join(' / '):'');
+ $('detail-hits').textContent=sum('hits');$('detail-gold').textContent=sum('goldHits');$('detail-expired').textContent=sum('missed');$('detail-pink').textContent=sum('trapHits');$('detail-empty').textContent=sum('emptyTaps');
+ $('round-scores').hidden=!sessionDone;
+ if(sessionDone)$('round-scores').textContent='Three-round scores · '+completed.map((r,i)=>'Round '+(i+1)+': '+r.score).join('  ·  ');
  chart(all);$('next').hidden=!(mode==='session'&&complete&&round<2);$('next').textContent='Round '+(round+2)+' · '+(phases[round+1]||'')+' →';$('again').textContent='Quick Play again →';
  $('result-title').focus({preventScroll:true});$('announcement').textContent=$('result-message').textContent;
 }
