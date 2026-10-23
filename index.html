@@ -100,42 +100,119 @@ button{font-family:inherit;cursor:pointer}.silent{background:transparent;min-hei
 .work-reminder strong{display:block;color:#e2d9ff;font-size:13px;line-height:1.3;margin-bottom:4px}
 .work-reminder p{font-size:11px;line-height:1.55;color:#b5c4db;margin:0}
 
+
+/* TAP SPRINT ARCADE — full game experience, sharing one design language. */
+:root{--ink:#fff8ff;--muted:#b9a6d2;--line:rgba(208,157,255,.24);--aqua:#72ffe3;--gold:#ffe278;--pink:#ff80b5;--violet:#bf68ff}
+html{background:#0d0b24}body{background:radial-gradient(ellipse 90% 48% at 50% -10%,#54218066,transparent 93%),#0d0b24;align-items:flex-start;padding-top:max(15px,env(safe-area-inset-top))}
+.game{background:radial-gradient(ellipse at 56% 0%,#54267c,#211440 28%,#11122e 65%,#0e1128 100%);border:1px solid #975aca6b;border-radius:27px;box-shadow:0 26px 65px #020015bb,0 0 42px #8420cc1a;width:min(100%,470px);padding:23px 18px max(20px,env(safe-area-inset-bottom))}
+.header{margin-bottom:17px;align-items:center}.eyebrow{color:var(--gold);letter-spacing:.17em;font-weight:950;font-size:11px}.silent{border:1px solid #ad72e58a;background:#ffffff09;color:#dec5f6;min-height:40px;font-size:11px;font-weight:800;border-radius:99px}
+h1{font-size:clamp(34px,9vw,47px);letter-spacing:-.065em;line-height:1.02;text-shadow:0 7px 34px #de53ff55;margin:0 0 7px}h1 span{background:linear-gradient(100deg,#ffe278,#ff9fdb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#c4aedb;font-size:13px;line-height:1.5;margin-bottom:19px}
+.stat{border:1px solid #8968b37d;border-radius:15px;background:linear-gradient(145deg,#ffffff0f,#ffffff04);box-shadow:inset 0 1px #ffffff0d}
+.stats .stat:first-child{border-color:#72ffe35e;background:linear-gradient(130deg,#72ffe31a,transparent 80%)}
+.stats .stat:nth-child(2){border-color:#ffe27855;background:linear-gradient(130deg,#ffe27812,transparent 80%)}
+.stats .stat:nth-child(3){border-color:#c382ff5e}
+.val{font-size:29px;font-weight:1000;color:var(--aqua)}.stats .stat:nth-child(2) .val{color:var(--gold)}.stats .stat:nth-child(3) .val{color:#e5b9ff}
+.label{font-size:10px;font-weight:900;letter-spacing:.11em;color:#c1b0d8}
+.time-wrap{color:#dfc5ff;font-size:11px;letter-spacing:.07em;font-weight:900;margin-bottom:9px}#phase{color:var(--gold)}#focus-level{color:#e5b2ff!important;border:1px solid #ac76e772;border-radius:99px;padding:4px 8px;font-size:10px!important}#time{color:#fff;font-size:15px;font-variant-numeric:tabular-nums}
+.track{height:8px;background:#ffffff13;border:1px solid #ffffff14;margin-bottom:14px}#fill{background:linear-gradient(90deg,#ffdd79,#c964ff,#6affdf);box-shadow:0 0 20px #db7bff88;transition:width .09s linear}
+.board{gap:9px}.tile{background:linear-gradient(155deg,#271d46,#131732);border:1px solid #7359a371;border-radius:19px;box-shadow:inset 0 2px 3px #ffffff08,0 3px 13px #07041336}
+.tile.orb,.tile.gold{border-color:#64ffde73;background:radial-gradient(circle,#56edcf25,#192f45 70%);box-shadow:inset 0 0 17px #54ffdf1a,0 0 17px #52e4e936}
+.tile.gold{border-color:#ffdc80c7;background:radial-gradient(circle,#ffb54a40,#423049 80%);box-shadow:0 0 20px #ffb9443b}
+.tile.trap{border-color:#ff79af91;background:radial-gradient(circle,#fc60a62e,#351b40 80%)}.tile:focus-visible{outline:3px solid var(--gold)}
+.tile.orb::before{background:radial-gradient(circle at 30% 24%,#e9fff9,#78ffe4 37%,#09b89e 78%);box-shadow:0 0 28px #72ffe397}
+.tile.gold::before{background:radial-gradient(circle at 30% 25%,#fffcef,#ffdf69 40%,#ec8d23 79%);box-shadow:0 0 29px #ffd06bb0}
+.tile.trap::before{box-shadow:0 0 25px #fb629b75}.tile.gold .symbol{color:#593109}
+.overlay{background:linear-gradient(145deg,#1e103be8,#0a0d24ed);border:1px solid #a25be870;backdrop-filter:blur(12px);box-shadow:inset 0 0 28px #a754ff12}
+.overlay-card{max-width:305px}.overlay h2{font-weight:1000;font-size:26px;text-shadow:0 0 20px #eb63ed55;letter-spacing:-.045em}.overlay p{color:#d0badf;font-size:13px}.big-emoji{font-size:37px;color:var(--gold);text-shadow:0 0 22px #ffd46690}.countdown-number{font-size:clamp(77px,21vw,105px);color:var(--gold);text-shadow:0 0 32px #ff9c6daa;margin:7px 0 13px}
+.start{background:linear-gradient(105deg,#72ffe3,#a1c7ff);color:#21133f;border-radius:16px;box-shadow:0 7px 23px #59ffea21;font-size:15px;font-weight:1000;min-height:54px;letter-spacing:.012em}
+.start:active{transform:scale(.98);filter:brightness(.95)}.start:focus-visible,.secondary:focus-visible,.silent:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.secondary{background:#ffffff09;color:#dfcaf3;border:1px solid #9c7ac75e;border-radius:14px;font-size:12px;font-weight:800}
+.overlay .secondary{border-color:#bc75ff9e;background:#9e48ed1b;color:#f0ddff}.controls{gap:10px}.controls .secondary{min-height:46px;margin-top:12px}
+.legend{color:#d8c5e9;gap:8px;font-size:10px;justify-content:space-between}.legend span{font-weight:900;letter-spacing:.02em}.dot{box-shadow:0 0 10px currentColor}.green{background:#72ffe3}.yellow{background:#ffde72}.pink{background:#ff77af}
+.burst{filter:drop-shadow(0 0 7px currentColor)}
+.results{padding:7px 0 0}.results>.eyebrow{text-align:center;font-size:12px;margin:6px 0 8px}.result-stars{text-align:center;color:var(--gold);font-size:27px;line-height:1.2;letter-spacing:.32em;padding-left:.32em;text-shadow:0 0 24px #ffbf4c82;margin:9px 0 5px}
+.results h2{font-size:clamp(27px,8vw,38px);font-weight:1000;line-height:1.07;letter-spacing:-.055em;text-shadow:0 3px 27px #f879ff80;text-align:center;margin:0 0 7px}.results #result-message{text-align:center;color:#d3bee6;font-size:12px;margin:9px 0 15px;min-height:20px}
+.result-scorepanel{border:2px solid #b65cff;border-radius:22px;background:linear-gradient(145deg,#8736b14d,#211440e8 80%);text-align:center;padding:17px 12px 20px;box-shadow:0 0 33px #e94bff24;margin-bottom:12px}
+.result-total{display:block;color:#fff;font-size:clamp(67px,21vw,100px);font-weight:1000;line-height:1.05;letter-spacing:-.085em;text-shadow:0 0 31px #fa96ff7c;font-variant-numeric:tabular-nums}
+.result-total-label{display:block;color:#f0b9ff;font-size:11px;letter-spacing:.20em;font-weight:950;margin-top:5px}
+.record-chip{display:table;margin:12px auto 0;background:var(--gold);color:#3b2054;padding:8px 13px;font-size:11px;line-height:1.2;border-radius:99px;font-weight:1000}
+.result-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:13px}
+.result-highlight{border:1px solid #9978b384;border-radius:15px;background:#ffffff0b;padding:14px 13px;text-align:left}
+.result-highlight strong{font-size:clamp(23px,8vw,31px);font-weight:1000;color:var(--aqua);display:block;line-height:1.08;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.result-highlight span{display:block;margin-top:8px;color:#c7b5df;font-size:10px;font-weight:900;letter-spacing:.08em}
+.result-extras{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 16px;color:#baaad5;font-size:10px;font-weight:750}
+.result-extras b{color:#fff;font-variant-numeric:tabular-nums}.result-extras>span{padding:8px 10px;background:#ffffff0a;border-radius:99px;border:1px solid #745c9980}
+.breakdown{margin:16px 0 20px}.section-heading h3,.history-header h4{font-size:18px;font-weight:1000;text-shadow:0 0 15px #d14cff22}.section-heading h3::before{content:"⚡";margin-right:7px;color:var(--gold)}.section-heading span{font-size:10px;color:#beacda}
+.breakdown-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.breakdown-card,.breakdown-card.wide{grid-column:auto;align-items:center;justify-content:center;text-align:center;gap:7px;padding:13px 5px 12px;border-radius:14px;background:linear-gradient(150deg,#147d7560,#1c2344);border:1px solid #41eed066;min-height:98px}
+.breakdown-card.gold-card{background:linear-gradient(150deg,#b78c3259,#39263e);border-color:#ffdc77a6}.breakdown-card.pink-card{background:linear-gradient(155deg,#b8347560,#321e45);border-color:#ff6cbaaf}
+.breakdown-card.expired-card,.breakdown-card.empty-card{background:#ffffff08;border-color:#7775a780}
+.breakdown-card.focus-card{background:linear-gradient(145deg,#1b778060,#192345);border-color:#38e5d07d}
+.breakdown-card .breakdown-label{font-size:10px;order:2;color:#e0c8ee;justify-content:center;font-weight:900;text-transform:uppercase}
+.breakdown-card .breakdown-dot{display:none}.breakdown-value{font-size:clamp(25px,9vw,39px);order:1;font-weight:1000}
+.breakdown-card .breakdown-hint{display:none}.breakdown-card.expired-card .breakdown-value,.breakdown-card.empty-card .breakdown-value{color:#cac3ff}
+.round-scores{background:#8d50db16;border-color:#9f6cd77a}
+.chart{border-color:#835d9e88;border-radius:17px;background:#ffffff07;padding:15px;margin-bottom:15px}.chart h3{font-size:14px;color:#fff;letter-spacing:-.02em}.chart .note{color:#b8a8d2}.chart-labels{color:#baadd6}
+.results>.note{color:#a792c5}
+.result-recent{border:1px solid #916ea78e;border-radius:17px;padding:14px 15px 15px;margin:15px 0;background:#ffffff0b}
+.result-recent .section-heading{margin-bottom:15px}.result-recent .section-heading h3{font-size:16px}
+.result-bars{display:flex;gap:9px;align-items:flex-end;min-height:100px;padding-top:24px}
+.result-bar-slot{display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;justify-content:flex-end;height:95px}
+.result-bar-value{display:block;font-size:12px;color:#e9ddff;font-weight:950;margin:0 0 4px;line-height:1.1;font-variant-numeric:tabular-nums}
+.result-bar-fill{width:100%;border-radius:10px 10px 2px 2px;max-width:65px;background:linear-gradient(180deg,#c26aff,#6f31ac);height:var(--bar-height);min-height:5px}
+.result-bar-slot.is-best .result-bar-fill{background:linear-gradient(180deg,#fff190,#ff9a45)}.result-bar-slot.is-best .result-bar-value{color:var(--gold)}
+.result-bar-label{display:block;color:#b9a7d3;font-size:9px;font-weight:800;margin-top:6px}
+.result-bar-empty{color:#ac9cc9;font-size:11px;line-height:1.5}
+.results #next{background:linear-gradient(100deg,#ffe478,#ffc07e);color:#36204a;min-height:54px}
+.results #again{margin-top:5px}.results #done{background:transparent;border:0;color:#c2aeda;margin:5px 0 0;min-height:46px;font-size:12px}
+.work-reminder{background:linear-gradient(105deg,#612e864f,#2b1c4f7a);border:1px solid #c18aff90;border-radius:15px}.work-reminder strong{color:#f8df89}.work-reminder p{color:#d5c4e4}
+.progress{border-top:1px solid #b67dfb56;margin-top:26px;padding-top:23px}.progress h3{color:#fff;text-shadow:0 0 25px #cf76ee55}.progress-count{background:#b274f626;border-color:#b67dfb7b;color:#efdbff}
+.progress-metric{background:linear-gradient(145deg,#ffffff12,#ffffff06);border-color:#9e75bf83}.progress-metric.best-round{background:linear-gradient(135deg,#85522742,#281b48);border-color:#fddd78a1}
+.progress-metric.best-session{background:linear-gradient(135deg,#a455f93c,#25163e);border-color:#bd83fa88}.progress-metric.best-round .progress-metric-value{color:var(--gold)}.progress-metric.best-session .progress-metric-value{color:#ddb6ff}
+.progress-metric-value{font-size:clamp(32px,9vw,42px)}.progress-metric-label{color:#ddc8e9}.progress-metric-unit{color:#c2b0d2}
+.history-header{margin-top:22px}.history-row{border-color:#9b76b56e!important;background:#ffffff0b!important}.history-row.is-best{background:#ffdd7810!important;border-color:#ffe2787a!important}.history-row.is-best .history-score strong{color:var(--gold)}.history-best-tag{color:var(--gold)}.history-score strong{font-size:30px}.history-info{color:#d7c6e9}
+.history-meter{background:#ffffff13}.history-meter-fill{background:linear-gradient(90deg,#9e55ea,#c67dff)}.history-row.is-best .history-meter-fill{background:linear-gradient(90deg,#ffc661,#ffe78e)}
+@media(max-width:360px){.game{padding:19px 13px 15px}.results h2{font-size:28px}.result-total{font-size:68px}.breakdown-grid{gap:6px}.breakdown-card{min-height:88px}.breakdown-card .breakdown-label{font-size:9px}.result-highlight{padding:12px 9px}.history-score strong{font-size:25px}.legend{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
 <main class="game" aria-label="Tap Sprint arcade game">
-<div class="header"><div class="eyebrow">⚡ MICRO-BREAK ARCADE</div><button class="silent" id="sound" type="button" aria-pressed="false">Sound off</button></div>
-<h1>TAP <span>SPRINT.</span></h1><p class="sub">A little break. Find your rhythm. Get back to it.</p>
+<div class="header"><div class="eyebrow">⚡ TAP SPRINT ARCADE</div><button class="silent" id="sound" type="button" aria-pressed="false">Sound off</button></div>
+<h1>TAP <span>SPRINT.</span></h1><p class="sub">20 seconds to power up your focus. Then back to it.</p>
 <div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label" id="combo-label">COMBO · ×1</span></div></div>
 <div id="arena">
 <div class="time-wrap"><span id="phase">QUICK PLAY</span><span id="focus-level" aria-label="Current challenge level">FOCUS 1</span><span id="time">20.0s</span></div><div class="track"><div id="fill"></div></div>
 <div class="board-wrap"><div class="board" id="board" aria-label="Tap the glowing circles"></div>
-<div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji">✦</span><h2>Find your flow.</h2><p>Tap green and gold. Avoid pink ×.<br>Build a streak for up to ×4 points.</p><button class="start" id="play" type="button">Quick Play · 20 seconds →</button><button class="secondary" id="session" type="button">Three rounds · 60 seconds of play</button><small>Stop whenever work calls. No pressure.</small></div></div></div>
+<div class="overlay" id="overlay"><div class="overlay-card"><span class="big-emoji">★ ★ ★</span><h2>READY, PLAYER?</h2><p>Hit green and gold. Dodge pink ×.<br>Stack combos for up to ×4 points.</p><button class="start" id="play" type="button">QUICK PLAY · 20 SEC →</button><button class="secondary" id="session" type="button">3-ROUND CHALLENGE →</button><small>Play a little. Power up your focus. Back to work.</small></div></div></div>
 <div class="controls"><button id="pause" class="secondary" type="button" disabled>Pause</button><button id="stop" class="secondary" type="button" disabled>Finish now</button></div><div class="legend"><span><i class="dot green"></i>+1 POINT</span><span><i class="dot yellow"></i>+3 GOLD</span><span><i class="dot pink"></i>−2 AVOID</span></div>
 </div>
 <section class="results" id="results" hidden aria-labelledby="result-title">
-<div class="eyebrow">ROUND COMPLETE</div><h2 id="result-title" tabindex="-1">Your play stats</h2><p class="note" id="result-message"></p>
+<div class="eyebrow">⚡ TAP SPRINT ARCADE</div><div class="result-stars" aria-hidden="true">★ ★ ★</div><h2 id="result-title" tabindex="-1">ROUND CLEARED!</h2><p class="note" id="result-message"></p>
+<div class="result-scorepanel"><strong id="result-score" class="result-total">0</strong><span class="result-total-label" id="result-score-label">TOTAL POINTS</span><span class="record-chip" id="record-chip" hidden>★ NEW PERSONAL BEST</span></div>
 <aside id="work-reminder" class="work-reminder" aria-label="Gentle break reminder" hidden><span class="work-reminder-mark" aria-hidden="true">☕</span><div><strong>Time to get back to it?</strong><p id="work-reminder-text"></p></div></aside>
-<div class="stats">
-<div class="stat"><span class="val" id="average">—</span><span class="label">AVERAGE REACTION</span></div>
-<div class="stat"><span class="val" id="fastest">—</span><span class="label">FASTEST REACTION</span></div>
-<div class="stat"><span class="val" id="accuracy">—</span><span class="label">TAP ACCURACY</span></div>
-<div class="stat"><span class="val" id="max-streak">0</span><span class="label">LONGEST STREAK</span></div>
+<div class="result-highlights">
+<div class="result-highlight"><strong id="accuracy">—</strong><span>TAP ACCURACY</span></div>
+<div class="result-highlight"><strong id="median">—</strong><span>MEDIAN REACTION</span></div>
 </div>
-<div class="stat median-card"><span class="val" id="median">—</span><span class="label">MEDIAN REACTION</span></div>
+<div class="result-extras"><span>AVERAGE <b id="average">—</b></span><span>FASTEST <b id="fastest">—</b></span><span>BEST STREAK <b id="max-streak">0</b></span></div>
 <section class="breakdown" aria-labelledby="breakdown-title">
-<div class="section-heading"><h3 id="breakdown-title">Your hits, at a glance</h3><span>Round breakdown</span></div>
+<div class="section-heading"><h3 id="breakdown-title">HIT BREAKDOWN</h3><span>Every tap counts</span></div>
 <div class="breakdown-grid">
 <div class="breakdown-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Hits</span><strong class="breakdown-value" id="detail-hits">0</strong><small class="breakdown-hint">Green + gold</small></div>
 <div class="breakdown-card gold-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Gold</span><strong class="breakdown-value" id="detail-gold">0</strong><small class="breakdown-hint">Of your hits</small></div>
 <div class="breakdown-card pink-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Pink taps</span><strong class="breakdown-value" id="detail-pink">0</strong><small class="breakdown-hint">Avoid these</small></div>
-<div class="breakdown-card wide expired-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Expired targets</span><strong class="breakdown-value" id="detail-expired">0</strong><small class="breakdown-hint">Targets missed in time</small></div>
-<div class="breakdown-card wide empty-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Empty taps</span><strong class="breakdown-value" id="detail-empty">0</strong><small class="breakdown-hint">Taps outside targets</small></div>
+<div class="breakdown-card expired-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Expired targets</span><strong class="breakdown-value" id="detail-expired">0</strong><small class="breakdown-hint">Targets missed in time</small></div>
+<div class="breakdown-card empty-card"><span class="breakdown-label"><i class="breakdown-dot" aria-hidden="true"></i>Empty</span><strong class="breakdown-value" id="detail-empty">0</strong><small class="breakdown-hint">Taps outside targets</small></div>
+<div class="breakdown-card focus-card"><span class="breakdown-label">Focus lvl</span><strong class="breakdown-value" id="detail-focus">1</strong><small class="breakdown-hint">Challenge level</small></div>
 </div><p id="round-scores" class="round-scores" hidden></p>
 </section>
-<div class="chart"><h3>Reaction time · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
-<p class="note">Reaction time runs from a target appearing to your tap. Accuracy = successful hits ÷ all taps. Paused time is excluded.</p>
-<button class="start" id="next" type="button" hidden>Next round →</button><button class="start" id="again" type="button">Beat my score →</button><button class="secondary" id="done" type="button">Done — back to work</button>
+<div class="result-recent" aria-labelledby="recent-title"><div class="section-heading"><h3 id="recent-title">YOUR LAST 5 ROUNDS</h3><span id="recent-best">BEST — ★</span></div><div id="result-bars" class="result-bars"></div></div>
+<div class="chart"><h3>Reaction speed · each successful hit</h3><p class="note">Lower is faster · milliseconds</p><div id="reaction-chart"></div></div>
+<p class="note">Reaction time starts when the target appears. Accuracy counts successful hits out of all taps; paused time is excluded.</p>
+<button class="start" id="next" type="button" hidden>Next round →</button><button class="start" id="again" type="button">PLAY AGAIN →</button><button class="secondary" id="done" type="button">Done for now? Back to work.</button>
 </section>
 <section id="progress" class="progress" aria-labelledby="progress-title">
 <div class="progress-top"><div><div class="eyebrow">YOUR RHYTHM · ON THIS DEVICE</div><h3 id="progress-title">Your past performance</h3></div><span class="progress-count" id="progress-count">0 rounds</span></div>
@@ -304,6 +381,23 @@ function recordCompletedGame(){
  saved.sessionChain=saved.lastSessionAt>0&&elapsed>=0&&elapsed<=BREAK_WINDOW_MS?saved.sessionChain+1:1;
  saved.lastSessionAt=now;
 }
+
+function renderRecentBars(){
+ const node=$('result-bars');node.replaceChildren();
+ const recent=saved.rounds.slice(0,5),max=Math.max(1,saved.best,...recent.map(r=>r.score));
+ $('recent-best').textContent='BEST '+saved.best+' ★';
+ if(!recent.length){const empty=document.createElement('p');empty.className='result-bar-empty';empty.textContent='Finish your first round to see your recent scores.';node.append(empty);return}
+ recent.forEach((r,i)=>{
+  const col=document.createElement('div');col.className='result-bar-slot';
+  if(r.complete&&r.score>0&&r.score===saved.best)col.classList.add('is-best');
+  const val=document.createElement('strong');val.className='result-bar-value';val.textContent=r.score;
+  const bar=document.createElement('div');bar.className='result-bar-fill';bar.style.setProperty('--bar-height',(Math.max(5,Math.round(72*r.score/max)))+'px');
+  const label=document.createElement('span');label.className='result-bar-label';label.textContent=i===0?'LATEST':String(i+1).padStart(2,'0');
+  col.setAttribute('aria-label',(i===0?'Latest round':'Round '+(i+1))+': '+r.score+' points');
+  col.append(val,bar,label);node.append(col);
+ });
+}
+
 function finish(complete){
  if(!playing)return;playing=false;clearTimeout(spawnTimer);clearInterval(clock);const taps=hits+trapHits+emptyTaps;
  const result={score:points,reactions:[...reactions],hits,trapHits,emptyTaps,missed,maxStreak,goldHits,accuracy:taps?Math.round(hits/taps*100):null,complete,date:new Date().toISOString(),mode};
@@ -321,7 +415,11 @@ function finish(complete){
  saved.focusLevel=focusLevel;
  persist();render();progress();$('pause').disabled=$('stop').disabled=true;$('arena').hidden=true;$('results').hidden=false;
  const scope=sessionDone?completed:[result],all=scope.flatMap(r=>r.reactions),sum=k=>scope.reduce((n,r)=>n+r[k],0),allTaps=sum('hits')+sum('trapHits')+sum('emptyTaps');
- $('result-title').textContent=sessionDone?total+' points · session complete':points+' points'+(complete?'!':' · saved');
+ $('result-title').textContent=sessionDone?'SESSION CLEARED!':complete?'ROUND CLEARED!':'ROUND SAVED';
+ $('result-score').textContent=(sessionDone?total:points).toLocaleString();
+ $('result-score-label').textContent=sessionDone?'SESSION POINTS':'TOTAL POINTS';
+ $('record-chip').hidden=!(sessionRecord||record||accuracyRecord);
+ $('record-chip').textContent=sessionRecord?'★ NEW SESSION BEST':record?'★ NEW PERSONAL BEST':'★ BEST ACCURACY';
  $('result-message').textContent=sessionRecord?'New three-round session best!':record?'New personal best round!':accuracyRecord?'Your most accurate round yet!':!complete?'Work calling? Your progress is saved.':mode==='session'&&!sessionDone?'Round '+(round+1)+' complete. Take a breather; continue when you choose.':'A good little break. Ready when you are.';
  $('work-reminder').hidden=!showReminder;
  if(showReminder)$('work-reminder-text').textContent=
@@ -329,10 +427,10 @@ function finish(complete){
  const ms=v=>Math.round(v)+' ms';
  $('median').textContent=all.length?ms(median(all)):'—';$('average').textContent=all.length?ms(all.reduce((a,b)=>a+b,0)/all.length):'—';$('fastest').textContent=all.length?ms(Math.min(...all)):'—';
  $('accuracy').textContent=allTaps?Math.round(sum('hits')/allTaps*100)+'%':'—';$('max-streak').textContent=Math.max(...scope.map(r=>r.maxStreak));
- $('detail-hits').textContent=sum('hits');$('detail-gold').textContent=sum('goldHits');$('detail-expired').textContent=sum('missed');$('detail-pink').textContent=sum('trapHits');$('detail-empty').textContent=sum('emptyTaps');
+ $('detail-hits').textContent=sum('hits');$('detail-gold').textContent=sum('goldHits');$('detail-expired').textContent=sum('missed');$('detail-pink').textContent=sum('trapHits');$('detail-empty').textContent=sum('emptyTaps');$('detail-focus').textContent=focusLevel+1;
  $('round-scores').hidden=!sessionDone;
  if(sessionDone)$('round-scores').textContent='Three-round scores · '+completed.map((r,i)=>'Round '+(i+1)+': '+r.score).join('  ·  ');
- chart(all);$('next').hidden=!(mode==='session'&&complete&&round<2);$('next').textContent='Round '+(round+2)+' · '+(phases[round+1]||'')+' →';$('again').textContent='Quick Play again →';
+ chart(all);renderRecentBars();$('next').hidden=!(mode==='session'&&complete&&round<2);$('next').textContent='NEXT ROUND '+(round+2)+' / 3 →';$('again').textContent='PLAY AGAIN →';
  $('result-title').focus({preventScroll:true});$('announcement').textContent=$('result-message').textContent;
 }
 function pause(){
