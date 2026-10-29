@@ -175,11 +175,27 @@ h1{font-size:clamp(34px,9vw,47px);letter-spacing:-.065em;line-height:1.02;text-s
 @media(max-width:360px){.game{padding:19px 13px 15px}.results h2{font-size:28px}.result-total{font-size:68px}.breakdown-grid{gap:6px}.breakdown-card{min-height:88px}.breakdown-card .breakdown-label{font-size:9px}.result-highlight{padding:12px 9px}.history-score strong{font-size:25px}.legend{font-size:9px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+/* Keep the whole board in view and remove everything beneath it during play. */
+html.in-play,html.in-play body{overflow:hidden;overscroll-behavior:none;touch-action:none}
+html.in-play body{position:fixed;inset:0;min-height:0;user-select:none;-webkit-user-select:none}
+.game.in-play .controls,.game.in-play .legend,.game.in-play #results,.game.in-play #progress{display:none!important}
+.game.in-play .board-wrap{width:min(100%,max(0px,calc(100dvh - 310px - env(safe-area-inset-top) - env(safe-area-inset-bottom))));margin-inline:auto}
+#play-pause{margin-left:auto;touch-action:manipulation}
+@media(max-height:600px){
+ .game.in-play{padding-top:10px;padding-bottom:10px}
+ .game.in-play .header{margin-bottom:8px}
+ .game.in-play h1,.game.in-play .sub{display:none}
+ .game.in-play .stats{margin-bottom:8px}
+ .game.in-play .stat{padding:6px}
+ .game.in-play .val{font-size:22px;line-height:1}
+ .game.in-play .label{font-size:8px;letter-spacing:0;white-space:nowrap}
+ .game.in-play .board-wrap{width:min(100%,max(0px,calc(100dvh - 205px - env(safe-area-inset-top) - env(safe-area-inset-bottom))))}
+}
 </style>
 </head>
 <body>
 <main class="game" aria-label="Tap Sprint arcade game">
-<div class="header"><div class="eyebrow">⚡ TAP SPRINT ARCADE</div><button class="silent" id="sound" type="button" aria-pressed="false">Sound off</button></div>
+<div class="header"><div class="eyebrow">⚡ TAP SPRINT ARCADE</div><button class="silent" id="play-pause" type="button" hidden>Pause</button><button class="silent" id="sound" type="button" aria-pressed="false">Sound off</button></div>
 <h1>TAP <span>SPRINT.</span></h1><p class="sub">20 seconds to power up your focus. Then back to it.</p>
 <div class="stats"><div class="stat"><span class="val" id="score">0</span><span class="label">SCORE</span></div><div class="stat"><span class="val" id="best">0</span><span class="label">BEST</span></div><div class="stat"><span class="val" id="streak">0</span><span class="label" id="combo-label">COMBO · ×1</span></div></div>
 <div id="arena">
@@ -345,6 +361,15 @@ function tick(){
  if(!playing||paused)return;const remaining=Math.max(0,endAt-performance.now());$('time').textContent=(remaining/1000).toFixed(1)+'s';$('fill').style.width=remaining/DURATION*100+'%';
  if(remaining===0)finish(true);
 }
+function setGameplayActive(active){
+ document.documentElement.classList.toggle('in-play',active);
+ document.querySelector('.game').classList.toggle('in-play',active);
+ $('play-pause').hidden=!active;
+ // Replays may start far down the results page. Always reveal the board first.
+ if(active)window.scrollTo({top:0,left:0,behavior:'instant'});
+}
+// Cancel only movement: pointerdown scoring and button/keyboard clicks stay intact.
+document.addEventListener('touchmove',e=>{if((countingDown||(playing&&!paused))&&e.cancelable)e.preventDefault()},{passive:false});
 function startRound(){
  clearTimeout(countdownTimer);clearTimeout(spawnTimer);clearInterval(clock);
  playing=false;paused=false;countingDown=true;points=streak=hits=trapHits=emptyTaps=missed=maxStreak=goldHits=0;
@@ -352,7 +377,7 @@ function startRound(){
  $('results').hidden=true;$('arena').hidden=false;$('pause').disabled=$('stop').disabled=true;$('pause').textContent='Pause';
  $('time').textContent='20.0s';$('fill').style.width='100%';
  $('phase').textContent=mode==='quick'?'QUICK PLAY · FIND YOUR FLOW':'ROUND '+(round+1)+' / 3 · '+phases[round].toUpperCase();
- updateFocusLevel();render();
+ updateFocusLevel();render();setGameplayActive(true);
  overlay.innerHTML='<div class="overlay-card"><h2 id="countdown-number" class="countdown-number">3</h2><p>Ready, focus...</p></div>';
  overlay.classList.remove('hide');$('announcement').textContent='Starting in 3 seconds';
  let count=3;
@@ -399,7 +424,7 @@ function renderRecentBars(){
 }
 
 function finish(complete){
- if(!playing)return;playing=false;clearTimeout(spawnTimer);clearInterval(clock);const taps=hits+trapHits+emptyTaps;
+ if(!playing)return;playing=false;paused=false;setGameplayActive(false);clearTimeout(spawnTimer);clearInterval(clock);const taps=hits+trapHits+emptyTaps;
  const result={score:points,reactions:[...reactions],hits,trapHits,emptyTaps,missed,maxStreak,goldHits,accuracy:taps?Math.round(hits/taps*100):null,complete,date:new Date().toISOString(),mode};
  const previous=saved.rounds.filter(r=>r.complete),record=complete&&points>saved.best;
  const accuracyRecord=complete&&hits>=5&&previous.filter(r=>r.hits>=5).length>0&&result.accuracy>Math.max(...previous.filter(r=>r.hits>=5).map(r=>r.accuracy||0));
@@ -435,29 +460,31 @@ function finish(complete){
 }
 function pause(){
  if(countingDown){
-  clearTimeout(countdownTimer);countingDown=false;
+  clearTimeout(countdownTimer);countingDown=false;setGameplayActive(false);
   overlay.innerHTML='<div class="overlay-card"><h2>Ready when you are.</h2><p>Start your countdown whenever you’re ready.</p><button class="start" id="restart-countdown" type="button">Start countdown →</button></div>';
   $('restart-countdown').addEventListener('click',startRound);return;
  }
  if(!playing||paused)return;if(performance.now()>=endAt){finish(true);return}
- paused=true;pausedAt=performance.now();spawnDelay=Math.max(0,targetAt-pausedAt);clearTimeout(spawnTimer);clearInterval(clock);render();
+ paused=true;setGameplayActive(false);pausedAt=performance.now();spawnDelay=Math.max(0,targetAt-pausedAt);clearTimeout(spawnTimer);clearInterval(clock);render();
  overlay.innerHTML='<div class="overlay-card"><span class="big-emoji">Ⅱ</span><h2>Take your time.</h2><p>Your round is paused.<br>Continue when you’re ready.</p><button class="start" id="resume" type="button">Resume →</button></div>';
  overlay.classList.remove('hide');$('resume').addEventListener('click',resume);$('pause').textContent='Resume';
 }
 function resume(){
  if(!playing||!paused)return;
- const duration=performance.now()-pausedAt;endAt+=duration;spawnAt+=duration;targetAt+=duration;paused=false;overlay.classList.add('hide');$('pause').textContent='Pause';render();schedule(spawnDelay);tick();clock=setInterval(tick,50);
+ const duration=performance.now()-pausedAt;endAt+=duration;spawnAt+=duration;targetAt+=duration;paused=false;setGameplayActive(true);overlay.classList.add('hide');$('pause').textContent='Pause';render();schedule(spawnDelay);tick();clock=setInterval(tick,50);
 }
 const homeMarkup=overlay.innerHTML;
 function bindHome(){$('play').addEventListener('click',()=>start('quick'));$('session').addEventListener('click',()=>start('session'))}
 function home(){
+ setGameplayActive(false);
  playing=false;paused=false;countingDown=false;clearTimeout(countdownTimer);clearTimeout(spawnTimer);clearInterval(clock);points=streak=0;focusLevel=saved.focusLevel;updateFocusLevel();$('arena').hidden=false;$('results').hidden=true;overlay.innerHTML=homeMarkup;overlay.classList.remove('hide');$('phase').textContent='QUICK PLAY';$('time').textContent='20.0s';$('fill').style.width='100%';$('pause').disabled=$('stop').disabled=true;render();bindHome();$('play').focus({preventScroll:true});
 }
 $('sound').addEventListener('click',()=>{saved.sound=!saved.sound;updateSound();persist();sound('hit')});
 $('pause').addEventListener('click',()=>paused?resume():pause());$('stop').addEventListener('click',()=>finish(false));
+$('play-pause').addEventListener('click',pause);
 $('again').addEventListener('click',()=>start('quick'));$('next').addEventListener('click',()=>{round++;startRound()});$('done').addEventListener('click',()=>{saved.sessionChain=0;saved.lastSessionAt=0;persist();home()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('blur',pause);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&playing){e.preventDefault();paused?resume():pause()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(playing||countingDown)){e.preventDefault();paused?resume():pause()}});
 bindHome();updateSound();updateFocusLevel();render();progress();
 })();
 
